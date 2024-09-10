@@ -23,6 +23,8 @@ import "dayjs/locale/es";
 import "../../style.css";
 import { EventCardProps } from "../../models/eventCardProps";
 import EventSubheader from "./EventSubheader";
+import { registerInternEventService } from "../../services/eventsService";
+import { useUserStore } from "../../store/store";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -44,17 +46,24 @@ const EventCard = ({ event }: EventCardProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [alert, setAlert] = useState<{
+    severity: "success" | "error";
+    message: string;
+  } | null>(null);
+  const user = useUserStore((state) => state.user);
 
   const {
-    name,
-    description,
-    startDate,
-    endDate,
-    duration,
-    place,
-    responsiblePerson,
-    maxInterns,
-    minInterns,
+    id: id_event,
+    title: title,
+    description: description,
+    start_date: start_date,
+    end_date: end_date,
+    duration_hours: duration_hours,
+    location: location,
+    max_interns: max_interns,
+    min_interns: min_interns,
+    responsible_intern_id: responsible_intern_id,
+    //TODO: get responsible intern info
   } = event;
 
   dayjs.locale("es");
@@ -71,7 +80,19 @@ const EventCard = ({ event }: EventCardProps) => {
     setDialogOpen(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    const res = await registerInternEventService(id_event, user!.id);
+    if (res.success) {
+      setAlert({
+        severity: "success",
+        message: `¡Te has registrado con éxito en el evento ${title}!`,
+      });
+    } else {
+      setAlert({
+        severity: "error",
+        message: `No se pudo completar el registro para el evento ${title}. Por favor, intenta de nuevo más tarde.`,
+      });
+    }
     setSnackbarOpen(true);
     setDialogOpen(false);
   };
@@ -87,7 +108,7 @@ const EventCard = ({ event }: EventCardProps) => {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
-        title={name}
+        title={title}
         titleTypographyProps={{
           fontSize: 20,
           align: "center",
@@ -115,7 +136,7 @@ const EventCard = ({ event }: EventCardProps) => {
         >
           {description}
         </Typography>
-        {!showFullDescription && description.length > 0 && (
+        {!showFullDescription && description && description.length > 0 && (
           <Typography
             fontSize={16}
             color="primary"
@@ -154,26 +175,26 @@ const EventCard = ({ event }: EventCardProps) => {
             marginTop={2}
           >
             <strong>Fecha inicial: </strong>{" "}
-            {dayjs(startDate).format("DD/MM/YYYY HH:mm")}
+            {dayjs(start_date).format("DD/MM/YYYY HH:mm")}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
             <strong>Fecha final: </strong>{" "}
-            {dayjs(endDate).format("DD/MM/YYYY HH:mm")}
+            {dayjs(end_date).format("DD/MM/YYYY HH:mm")}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Encargado: </strong> {responsiblePerson}
+            <strong>Encargado: </strong> {responsible_intern_id}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Duración: </strong> {duration}
+            <strong>Duración: </strong> {duration_hours} horas
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Lugar: </strong> {place}
+            <strong>Lugar: </strong> {location}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Máximo de Becarios: </strong> {maxInterns}
+            <strong>Máximo de Becarios: </strong> {max_interns}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Máximo de Suplentes: </strong> {minInterns}
+            <strong>Máximo de Suplentes: </strong> {min_interns}
           </Typography>
         </CardContent>
       </Collapse>
@@ -186,10 +207,10 @@ const EventCard = ({ event }: EventCardProps) => {
         }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        maxWidth="sm" 
+        maxWidth="sm"
       >
         <DialogTitle>
-          <Typography variant="h5" align="center" sx={{ fontWeight: 'bold' }}>
+          <Typography variant="h5" align="center" sx={{ fontWeight: "bold" }}>
             Confirmar inscripción
           </Typography>
           <IconButton
@@ -207,7 +228,7 @@ const EventCard = ({ event }: EventCardProps) => {
         </DialogTitle>
         <DialogContent>
           <Typography variant="body1" align="center">
-            ¿Estás seguro de inscribirte al evento "{name}"?
+            ¿Estás seguro de inscribirte al evento "{title}"?
           </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "24px" }}>
@@ -218,8 +239,8 @@ const EventCard = ({ event }: EventCardProps) => {
               backgroundColor: "primary",
               color: "white",
               marginRight: 2,
-              fontWeight: 'bold',
-              minWidth: '120px',
+              fontWeight: "bold",
+              minWidth: "120px",
             }}
           >
             Cancelar
@@ -230,8 +251,8 @@ const EventCard = ({ event }: EventCardProps) => {
             sx={{
               backgroundColor: "red",
               color: "white",
-              fontWeight: 'bold',
-              minWidth: '120px',
+              fontWeight: "bold",
+              minWidth: "120px",
             }}
           >
             Confirmar
@@ -239,19 +260,21 @@ const EventCard = ({ event }: EventCardProps) => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
+      {alert && (
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
           onClose={handleSnackbarClose}
-          severity="success"
-          sx={{ width: "100%" }}
         >
-          ¡Te has registrado con éxito en el evento {name}!
-        </Alert>
-      </Snackbar>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={alert.severity}
+            sx={{ width: "100%" }}
+          >
+            {alert.message}
+          </Alert>
+        </Snackbar>
+      )}
     </Card>
   );
 };

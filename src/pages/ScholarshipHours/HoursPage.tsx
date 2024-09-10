@@ -3,30 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import GraphicHours from "./GraphicHours";
 import HoursCard from "../../components/common/HoursCard";
+import { Interns } from "../../models/internsInterface";
+import { getInternService } from "../../services/internService";
 
-interface HoursStats {
-    totalHorasRequeridas: number;
-    horasRealizadas: number;
-    horasFaltantes: number;
-}
+
 
 function HoursPage() {
     const navigate = useNavigate();
-    const [stats, setStats] = useState<HoursStats>();
+    const [intern, setIntern] = useState<Interns>();
 
-    useEffect(() => {
-    setTimeout(() => {
-        const totalHorasRequeridas = 50;
-        const horasRealizadas = 50;
-        const horasFaltantes = totalHorasRequeridas - horasRealizadas;
+    const fetchIntern = async () => {
+        const res = await getInternService(1);
+        if(res.success){
+            setIntern(res.data);
+        }
+    }
 
-        setStats({
-            totalHorasRequeridas,
-            horasRealizadas,
-            horasFaltantes,
-        });
-    }, 1000);
-    }, []);
+    useEffect(()=>{
+        fetchIntern();
+    },[]);
 
     const handleEventsClick = () => {
     navigate("/events");
@@ -47,7 +42,7 @@ function HoursPage() {
                 textColor="#FFFFFF"
                 title="Total de Horas Requeridas"
                 subtitle=""
-                count={stats?.totalHorasRequeridas || 0}
+                count={intern?.total_hours || 0}
                 percentage={100}
                 />
             </Grid>
@@ -57,8 +52,8 @@ function HoursPage() {
                 textColor="#FFFFFF"
                 title="Horas Realizadas"
                 subtitle=""
-                count={stats?.horasRealizadas || 0}
-                percentage={(stats?.horasRealizadas || 0) / (stats?.totalHorasRequeridas || 1) * 100}
+                count={intern?.completed_hours || 0}
+                percentage={(intern?.completed_hours || 0) / (intern?.total_hours || 1) * 100}
                 />
             </Grid>
             <Grid item xs={12}>
@@ -67,8 +62,8 @@ function HoursPage() {
                 textColor="#FFFFFF"
                 title="Horas Faltantes"
                 subtitle=""
-                count={stats?.horasFaltantes || 0}
-                percentage={(stats?.horasFaltantes || 0) / (stats?.totalHorasRequeridas || 1) * 100}
+                count={intern?.pending_hours || 0}
+                percentage={(intern?.pending_hours || 0) / (intern?.total_hours || 1) * 100}
                 />
             </Grid>
             </Grid>

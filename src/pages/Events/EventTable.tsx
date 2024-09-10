@@ -1,61 +1,76 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import ContainerPage from "../../components/common/ContainerPage";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { events } from "../../data/events";
 import dayjs from "dayjs";
+import ContainerPage from "../../components/common/ContainerPage";
+import { getEventsInformationsService } from "../../services/eventsService";
+import { EventInformations } from "../../models/eventInterface";
 
 const EventTable = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [events, setEvents] = useState<EventInformations[]>();
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [selectedEventName, setSelectedEventName] = useState<string>("");
+
+  const fetchEvents = async () => {
+    const res = await getEventsInformationsService();
+    if (res.success) {
+      setEvents(res.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   const columns: GridColDef[] = [
     {
-      field: "startDate",
+      field: "start_date",
       headerName: "Fecha Inicio",
       headerAlign: "center",
       align: "center",
       flex: 1,
+      // TODO: change any to an interface 
       valueGetter: (params: any) =>
         dayjs(params.startDate).format("DD/MM/YYYY"),
     },
     {
-      field: "name",
+      field: "title",
       headerName: "Nombre del Evento",
       headerAlign: "center",
       align: "center",
       flex: 1,
     },
     {
-      field: "responsiblePerson",
+      field: "responsible_intern_id",
       headerName: "Supervisor del evento",
       headerAlign: "center",
       align: "center",
       flex: 1,
     },
     {
-      field: "pendingInterns",
+      field: "pending_interns",
       headerName: "Solicitudes de Becarios",
       headerAlign: "center",
       align: "center",
       flex: 1,
     },
     {
-      field: "selectedInterns",
+      field: "accepted_interns",
       headerName: "Becarios Seleccionados",
       headerAlign: "center",
       align: "center",
@@ -72,21 +87,21 @@ const EventTable = () => {
           <IconButton
             color="primary"
             aria-label="ver"
-            onClick={() => handleView(params.row.id_event)}
+            onClick={() => handleView(params.row.id)}
           >
             <VisibilityIcon />
           </IconButton>
           <IconButton
             color="primary"
             aria-label="editar"
-            onClick={() => handleEdit(params.row.id_event)}
+            onClick={() => handleEdit(params.row.id)}
           >
             <EditIcon />
           </IconButton>
           <IconButton
             color="secondary"
             aria-label="eliminar"
-            onClick={() => handleClickOpen(params.row.id_event, params.row.name)}
+            onClick={() => handleClickOpen(params.row.id)}
           >
             <DeleteIcon />
           </IconButton>
@@ -100,6 +115,7 @@ const EventTable = () => {
   };
 
   const handleView = (id: number) => {
+    // TODO: use id to show proper event details
     navigate(`/interns`);
   };
 
@@ -107,21 +123,19 @@ const EventTable = () => {
     navigate(`/editEvent/${id}`);
   };
 
-  const handleClickOpen = (id: number, name: string) => {
+  const handleClickOpen = (id: number) => {
     setSelectedId(id);
-    setSelectedEventName(name);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
     setSelectedId(null);
-    setSelectedEventName("");
   };
 
   const handleDelete = async () => {
     // TODO: add actual delete event logic
-    setOpen(false);
+    setOpen(false)
   };
 
   return (
@@ -141,9 +155,9 @@ const EventTable = () => {
     >
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
-          rows={events}
+          rows={events || []}
           columns={columns}
-          getRowId={(row) => row.id_event}
+          getRowId={(row) => row.id}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
@@ -158,7 +172,7 @@ const EventTable = () => {
           }}
           pageSizeOptions={[5, 10]}
         />
-        <Dialog
+         <Dialog
           open={open}
           onClose={(_, reason) => {
             if (reason !== "backdropClick") { 
@@ -167,16 +181,12 @@ const EventTable = () => {
           }}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          maxWidth="xs"
-          fullWidth
         >
           <DialogTitle
             id="alert-dialog-title"
-            sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: '8px 16px' }} 
+            sx={{ display: "flex", justifyContent: "space-between" }} 
           >
-            <Typography sx={{ textAlign: 'center', width: '100%', fontWeight: 'bold' }}>
-              Confirmar eliminación
-            </Typography>
+            {"Confirmar eliminación"}
             <IconButton
               edge="end"
               color="inherit"
@@ -186,33 +196,22 @@ const EventTable = () => {
               <CloseIcon />
             </IconButton>
           </DialogTitle>
-          <DialogContent sx={{ padding: '16px' }}>
-            <Typography variant="body1" align="center">
-              ¿Estás seguro de eliminar el evento "{selectedEventName}"? Esta acción no se puede deshacer.
-            </Typography>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              ¿Estás seguro de que deseas eliminar este evento? Esta acción no
+              se puede deshacer.
+            </DialogContentText>
           </DialogContent>
-          <DialogActions sx={{ justifyContent: "flex-end", padding: '8px 16px', gap: '8px' }}>
-            <Button
-              onClick={handleClose}
-              color="primary"
-              variant="contained"
-              sx={{
-                color: 'white',
-                fontWeight: 'bold',
-                minWidth: '80px',
-              }}
-            >
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
               Cancelar
             </Button>
-            <Button
-              onClick={handleDelete}
-              sx={{
-                backgroundColor: "red",
-                color: "white",
-                fontWeight: 'bold',
-                minWidth: '80px',
-                "&:hover": { backgroundColor: "darkred" },
-              }}
+            <Button onClick={handleDelete} 
+            sx={{
+              backgroundColor: "red",
+              color: "white",
+              "&:hover": { backgroundColor: "darkred" },
+            }}
             >
               Eliminar
             </Button>

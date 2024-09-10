@@ -76,7 +76,7 @@ const UpdateEventForm: React.FC = () => {
         description: eventData?.description || "",
         maxParticipants: eventData?.maxInterns || 0,
         minParticipants: eventData?.minInterns || 0,
-        responsiblePerson: eventData?.responsiblePerson || "",
+        responsiblePerson: eventData?.responsiblePerson || 0,
         status: "PENDIENTE",
         },
         validationSchema,
