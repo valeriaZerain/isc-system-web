@@ -25,14 +25,13 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
             <Grid item xs={8}>
               <Typography variant="body1" color="textSecondary">
-                <strong>Fecha:</strong>{" "}
-                {event.date.format("DD/MM/YYYY") || "yo"}
+                <strong>Fecha:</strong> {event.date.format("DD/MM/YYYY")}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Duración:</strong> {event.duration}
+                <strong>Duración:</strong> {event.duration} horas
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Horas becarias:</strong> {event.scholarshipHours}
+                <strong>Horas becarias:</strong> {event.scholarshipHours} horas
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 <strong>Lugar:</strong> {event.location}
