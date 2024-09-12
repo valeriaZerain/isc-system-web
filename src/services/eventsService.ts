@@ -86,7 +86,7 @@ export const deleteInternFromEventService = async (
     if (response.status == 200) {
       return response.data;
     } else {
-      return { error: "Failed to register intern on event" };
+      return { error: "Failed to delete intern from an event" };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -104,6 +104,23 @@ export const getFullEventInformationService = async (id: string) => {
       return response.data;
     } else {
       return { error: "Failed to fetch full event info" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const deleteEventService = async (id_event: number) => {
+  try {
+    const response = await apiClient.delete(`events/${id_event}`);
+    if (response.status == 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to delete intern on event" };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
