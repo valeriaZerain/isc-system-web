@@ -28,24 +28,7 @@ const InternsListPage = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [event, setEvent] = useState<FullEvent>();
   const [eventDetails, setEventDetails] = useState<any>(null);
-  const [students, setStudents] = useState<any>([
-    {
-      id: 1,
-      name: "Alexia Diana Marín Mamani",
-      code: "608555",
-      time: "22:23",
-      status: "Rechazado",
-      hours: 10,
-    },
-    {
-      id: 2,
-      name: "Rodrigo Gustavo Reyes Monzón",
-      code: "679523",
-      time: "08:49",
-      status: "Aceptado",
-      hours: 20,
-    },
-  ]);
+  const [students, setStudents] = useState<any>([]);
   const { id_event } = useParams<{ id_event: string }>();
   const navigate = useNavigate();
 
@@ -65,20 +48,21 @@ const InternsListPage = () => {
   };
 
   const setupEventDetails = () => {
-    const details = event && {
-      title: event?.title,
-      date: dayjs(event?.start_date),
-      endDate: dayjs(event?.end_date),
-      duration: event?.duration_hours,
-      scholarshipHours: event?.assigned_hours,
-      location: event?.location,
-      maxParticipants: event?.max_interns,
-      minParticipants: event?.min_interns,
-      responsiblePerson: event?.responsible_intern_id,
-      description: event?.description,
-    };
-    setEventDetails(details);
-    console.log(event, "xd");
+    if (event) {
+      const details = {
+        title: event?.title,
+        date: dayjs(event?.start_date),
+        endDate: dayjs(event?.end_date),
+        duration: event?.duration_hours,
+        scholarshipHours: event?.assigned_hours,
+        location: event?.location,
+        maxParticipants: event?.max_interns,
+        minParticipants: event?.min_interns,
+        responsiblePerson: event?.responsible_intern_id,
+        description: event?.description,
+      };
+      setEventDetails(details);
+    }
   };
 
   const setupStudents = () => {
@@ -90,8 +74,8 @@ const InternsListPage = () => {
         code: intern.code,
         time: dayjs(intern.registration_date).format("DD/MM: hh:MM"),
         status: intern.type,
-        hours: event.assigned_hours,
         //TODO: change to hours from event_interns
+        hours: event.assigned_hours,
       }));
     setStudents(students);
   };
@@ -279,10 +263,9 @@ const InternsListPage = () => {
                     Editar Horas Becarias
                   </Typography>
                   <Typography variant="body1" sx={{ textAlign: "left", mt: 1 }}>
-                    {
+                    {students &&
                       students.find((student) => student.id === selectedId)
-                        ?.name
-                    }
+                        ?.name}
                   </Typography>
                 </DialogTitle>
                 <DialogContent>

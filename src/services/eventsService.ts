@@ -130,3 +130,20 @@ export const deleteEventService = async (id_event: number) => {
     }
   }
 };
+
+export const updateEventService = async (id_event: number, event: Event) => {
+  try {
+    const response = await apiClient.put(`events/${id_event}`, event);
+    if (response.status == 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to delete intern from an event" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
