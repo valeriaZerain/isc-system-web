@@ -10,6 +10,8 @@ import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import EventIcon from "@mui/icons-material/Event";
 import ViewListIcon from "@mui/icons-material/ViewList";
+import HistoryIcon from '@mui/icons-material/History';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
 
 import { roles } from "./roles";
 const { ADMIN, PROFESSOR, STUDENT, INTERN, PROGRAM_DIRECTOR, SUPERVISOR } =
@@ -61,7 +63,7 @@ export const menu = [
   {
     key: "programDirector",
     path: "/programDirector",
-    text: "Eventos",
+    text: "Lista de Eventos",
     icon: <EmojiPeopleIcon color="primary" />,
     roles: [ADMIN, PROGRAM_DIRECTOR],
   },
@@ -72,10 +74,10 @@ export const menu = [
     icon: <SupervisedUserCircleIcon color="primary" />,
     roles: [ADMIN, SUPERVISOR],
   },
-  {
+  { 
     key: "CompleteScholarship",
     path: "/CompleteScholarshipHour",
-    text: "Finalizar",
+    text: "Eventos",
     icon: <PendingActionsIcon color="primary" />,
     roles: [ADMIN, PROGRAM_DIRECTOR],
   },
@@ -95,8 +97,22 @@ export const menu = [
   {
     key: "viewInterns",
     path: "/eventsByInterns",
-    text: "Inscritos",
+    text: "Becarios",
     icon: <ViewListIcon color="primary" />,
     roles: [ADMIN, PROGRAM_DIRECTOR],
+  },
+  {
+    key: "eventHistory",
+    path: "/eventHistory",
+    text: "Historial",
+    icon: <HistoryIcon color="primary" />,
+    roles: [ADMIN, STUDENT, INTERN],
+  },
+  {
+    key: "preInscriptions",
+    path: "/preInscriptions",
+    text: "Pre-Inscripciones",
+    icon: <InsertInvitationIcon color="primary" />,
+    roles: [ADMIN, STUDENT, INTERN],
   },
 ];

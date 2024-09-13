@@ -76,31 +76,6 @@ function HoursPage() {
             </Box>
         </Grid>
         </Grid>
-        <Box
-        sx={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-            flexDirection: { xs: "column", md: "row" },
-        }}
-        >
-        <Button
-            variant="contained"
-            color="primary"
-            sx={{ margin: "10px", width: { xs: "100%", md: "200px" } }}
-            onClick={handleRegistrationEventsClick}
-        >
-            Pre inscripciones
-        </Button>
-        <Button
-            variant="contained"
-            color="primary"
-            sx={{ margin: "10px", width: { xs: "100%", md: "200px" } }}
-            onClick={handleEventsClick}
-        >
-            Eventos
-        </Button>
-        </Box>
     </Container>
     );
 }
