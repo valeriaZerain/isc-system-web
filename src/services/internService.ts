@@ -21,7 +21,6 @@ export const getInternService = async (intern_id: number) => {
 export const getInternEvents = async (intern_id: number) => {
   try {
     const response = await apiClient.get(`/interns/${intern_id}/my-events`);
-    console.log(response)
     if (response.status === 200) {
       return response.data;
     } else {

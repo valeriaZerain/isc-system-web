@@ -295,19 +295,6 @@
   ],
   "users": [
     {
-      "name": "Zein",
-      "code": "68391",
-      "lastname": "Tonconi",
-      "mothername": "Mendoza",
-      "email": "zein@quya.com",
-      "cellphone": "70186881",
-      "roles": [
-        "Estudiante"
-      ],
-      "degree": "",
-      "id": 12346
-    },
-    {
       "name": "Mildret",
       "code": "69271",
       "lastname": "Robles",
@@ -335,7 +322,7 @@
     },
     {
       "name": "Adrian",
-      "code": "",
+      "code": "12658",
       "lastname": "Thompson",
       "mothername": "Machaca",
       "email": "thomas@thompson.com",
@@ -345,6 +332,20 @@
       ],
       "degree": "Ing.",
       "id": 12349
+    },
+    {
+      "name": "Jhonny",
+      "code": "70416",
+      "lastname": "Cabezas",
+      "mothername": "Gomez",
+      "email": "jhony@jhony.com",
+      "cellphone": "78198108",
+      "roles": [
+        "Becario",
+        "Estudiante"
+      ],
+      "degree": "",
+      "id": 12350
     }
   ]
 }

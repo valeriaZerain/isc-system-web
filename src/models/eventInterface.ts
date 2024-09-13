@@ -34,11 +34,14 @@ export interface Event {
   updated_at?: string;
 }
 
-export interface EventInformations extends Event{
+export interface EventInformations extends Event {
   accepted_interns: string;
   pending_interns: string;
 }
+export interface FullEvent extends Event {
+  interns: [];
+}
 
-export interface EventInternsType extends Event{
-  type: string
+export interface EventInternsType extends Event {
+  type: string;
 }

@@ -9,7 +9,7 @@ interface TablePageProps {
 }
 
 const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
-  return (
+  return event ? (
     <Container fixed>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -28,10 +28,10 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
                 <strong>Fecha:</strong> {event.date.format("DD/MM/YYYY")}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Duración:</strong> {event.duration}
+                <strong>Duración:</strong> {event.duration} horas
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Horas becarias:</strong> {event.scholarshipHours}
+                <strong>Horas becarias:</strong> {event.scholarshipHours} horas
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 <strong>Lugar:</strong> {event.location}
@@ -58,6 +58,10 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
         </Grid>
       </Grid>
     </Container>
+  ) : (
+    <Typography variant="h6" align="center">
+      Cargando detalles del evento...
+    </Typography>
   );
 };
 

@@ -1,30 +1,30 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-} from "@mui/material";
+import { Alert, Button, IconButton, Snackbar } from "@mui/material";
 import { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
-import { getEventsInformationsService } from "../../services/eventsService";
+import {
+  deleteEventService,
+  getEventsInformationsService,
+} from "../../services/eventsService";
 import { EventInformations } from "../../models/eventInterface";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
 
 const EventTable = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [events, setEvents] = useState<EventInformations[]>();
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alert, setAlert] = useState<{
+    severity: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const fetchEvents = async () => {
     const res = await getEventsInformationsService();
@@ -44,7 +44,7 @@ const EventTable = () => {
       headerAlign: "center",
       align: "center",
       flex: 1,
-      // TODO: change any to an interface 
+      // TODO: change any to an interface
       valueGetter: (params: any) =>
         dayjs(params.startDate).format("DD/MM/YYYY"),
     },
@@ -110,13 +110,16 @@ const EventTable = () => {
     },
   ];
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const handleCreateEvent = () => {
     navigate("/events/create");
   };
 
   const handleView = (id: number) => {
-    // TODO: use id to show proper event details
-    navigate(`/interns`);
+    navigate(`/interns/${id}`);
   };
 
   const handleEdit = (id: string) => {
@@ -134,8 +137,21 @@ const EventTable = () => {
   };
 
   const handleDelete = async () => {
-    // TODO: add actual delete event logic
-    setOpen(false)
+    const res = selectedId && (await deleteEventService(selectedId));
+    if (res.success) {
+      setAlert({
+        severity: "success",
+        message: "¡Evento eliminado con éxito!",
+      });
+    } else {
+      setAlert({
+        severity: "error",
+        message: "No se pudo eliminar el evento",
+      });
+    }
+    setSnackbarOpen(true);
+    setOpen(false);
+    fetchEvents();
   };
 
   return (
@@ -172,51 +188,28 @@ const EventTable = () => {
           }}
           pageSizeOptions={[5, 10]}
         />
-         <Dialog
+        <ConfirmDialog
           open={open}
-          onClose={(_, reason) => {
-            if (reason !== "backdropClick") { 
-              handleClose();
-            }
-          }}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle
-            id="alert-dialog-title"
-            sx={{ display: "flex", justifyContent: "space-between" }} 
+          onClose={handleClose}
+          onConfirm={handleDelete}
+          title="Confirmar eliminación"
+          description="¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer."
+        />
+        {alert && (
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
           >
-            {"Confirmar eliminación"}
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
+            <Alert
+              onClose={handleSnackbarClose}
+              severity={alert.severity}
+              sx={{ width: "100%" }}
             >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              ¿Estás seguro de que deseas eliminar este evento? Esta acción no
-              se puede deshacer.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Cancelar
-            </Button>
-            <Button onClick={handleDelete} 
-            sx={{
-              backgroundColor: "red",
-              color: "white",
-              "&:hover": { backgroundColor: "darkred" },
-            }}
-            >
-              Eliminar
-            </Button>
-          </DialogActions>
-        </Dialog>
+              {alert.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
     </ContainerPage>
   );

@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
   };
 
   const filteredMenu = menu.filter((item) =>
-    item.roles?.some((role) => user?.roles?.includes(role))
+    item.roles?.some(role => user?.roles?.includes(role))
   );
 
   return (

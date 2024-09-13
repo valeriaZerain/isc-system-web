@@ -18,6 +18,7 @@ export const getEventsService = async () => {
     }
   }
 };
+
 export const getEventsInformationsService = async () => {
   try {
     const response = await apiClient.get("/events/register-information");
@@ -34,6 +35,7 @@ export const getEventsInformationsService = async () => {
     }
   }
 };
+
 export const registerInternEventService = async (
   id_event: number,
   id_intern: number
@@ -84,7 +86,58 @@ export const deleteInternFromEventService = async (
     if (response.status == 200) {
       return response.data;
     } else {
-      return { error: "Failed to register intern on event" };
+      return { error: "Failed to delete intern from an event" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const getFullEventInformationService = async (id: string) => {
+  try {
+    const response = await apiClient.get(`events/${id}/registrations`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to fetch full event info" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const deleteEventService = async (id_event: number) => {
+  try {
+    const response = await apiClient.delete(`events/${id_event}`);
+    if (response.status == 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to delete intern on event" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const updateEventService = async (id_event: number, event: Event) => {
+  try {
+    const response = await apiClient.put(`events/${id_event}`, event);
+    if (response.status == 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to delete intern from an event" };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
