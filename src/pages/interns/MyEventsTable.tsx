@@ -242,18 +242,6 @@ const MyEventsTable = () => {
       <div
         style={{ position: "relative", height: "100vh", paddingTop: "19px" }}
       >
-        <IconButton
-          onClick={handleBackClick}
-          aria-label="back"
-          style={{
-            position: "absolute",
-            top: "17px",
-            left: "-9px",
-            zIndex: 1,
-          }}
-        >
-          <ArrowBackIcon />
-        </IconButton>
         <ContainerPage
           title="Eventos actuales"
           subtitle="Administra y visualiza tus eventos"

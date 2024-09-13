@@ -273,8 +273,24 @@ const protectedRoutes = [
       {
         path: "/supervisor",
         element: (
-          <RoleGuard allowedRoles={[ADMIN, STUDENT]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, SUPERVISOR]}>
             <ViewInternSupervisor />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/eventHistory",
+        element: (
+          <RoleGuard allowedRoles={[ADMIN, STUDENT,INTERN]}>
+            <EventHistory />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/preInscriptions",
+        element: (
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN]}>
+            <MyEventsTable />
           </RoleGuard>
         ),
       },

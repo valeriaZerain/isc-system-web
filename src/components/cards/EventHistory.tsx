@@ -122,18 +122,6 @@ const EventHistory = () => {
   
   return (
     <div style={{ position: 'relative'}}>
-      <IconButton
-        onClick={() => window.history.back()}
-        aria-label="back"
-        style={{
-          position: 'absolute',
-          top: '17px',
-          left: '-9px',
-        }}
-      >
-        <ArrowBackIcon />
-      </IconButton>
-
       <SplitButton
         options={[
           { label: 'Primer Semestre', onClick: () => setSelectedSemester(0) },
