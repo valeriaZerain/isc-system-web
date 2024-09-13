@@ -24,23 +24,47 @@ import { createEventService } from "../../services/eventsService.ts";
 const validationSchema = Yup.object({
   title: Yup.string().required("El nombre del evento es obligatorio"),
   description: Yup.string().required("La descripción es obligatoria"),
-  location: Yup.string().required("La ubicacion es obligatorio"),
-  start_date: Yup.date().required("La fecha es obligatoria"),
-  end_date: Yup.date().required("La fecha de finalización es obligatoria"),
-  registration_deadline: Yup.date().required(
-    "La fecha límite de inscripción obligatoria"
-  ),
+  location: Yup.string().required("La ubicación es obligatoria"),
+  start_date: Yup.date()
+    .required("La fecha de inicio es obligatoria")
+    .min(dayjs().startOf('day').toDate(), "La fecha de inicio debe ser igual o posterior al día actual")
+    .max(dayjs().add(2, 'year').toDate(), "La fecha de inicio no puede ser posterior a dos años desde la fecha actual"),
+  end_date: Yup.date()
+    .required("La fecha de finalización es obligatoria")
+    .min(dayjs().startOf('day').toDate(), "La fecha de finalización debe ser igual o posterior al día actual")
+    .max(dayjs().add(2, 'year').toDate(), "La fecha de finalización no puede ser posterior a dos años desde la fecha actual"),
+  start_cancellation_date: Yup.date()
+    .required('La fecha de inicio de bajas es obligatoria')
+    .min(dayjs().startOf('day').toDate(), "La fecha de inicio de bajas debe ser igual o posterior al día actual")
+    .max(dayjs().add(2, 'year').toDate(), "La fecha de inicio de bajas no puede ser posterior a dos años desde la fecha actual"),
+  end_cancellation_date: Yup.date()
+    .required('La fecha de fin de bajas es obligatoria')
+    .min(dayjs().startOf('day').toDate(), "La fecha de fin de bajas debe ser igual o posterior al día actual")
+    .max(dayjs().add(2, 'year').toDate(), "La fecha de fin de bajas no puede ser posterior a dos años desde la fecha actual")
+    .test("is-before-start", "La fecha límite debe ser anterior a la fecha de inicio", function (value) {
+      const { start_date } = this.parent;
+      return dayjs(value).isBefore(dayjs(start_date));
+    }),
+  registration_deadline: Yup.date()
+    .required("La fecha límite de inscripción es obligatoria")
+    .min(dayjs().startOf('day').toDate(), "La fecha límite de inscripción debe ser igual o posterior al día actual")
+    .max(dayjs().add(2, 'year').toDate(), "La fecha límite de inscripción no puede ser posterior a dos años desde la fecha actual")
+    .test("is-before-start", "La fecha límite debe ser anterior a la fecha de inicio", function (value) {
+      const { start_date } = this.parent;
+      return dayjs(value).isBefore(dayjs(start_date));
+    }),
   duration_hours: Yup.number()
     .required("La duración es obligatoria")
-    .min(1, "La duracion minima es de 1 hora"),
-  assigned_hours: Yup.string().required("Las horas becarias son obligatorias"),
+    .min(1, "La duración mínima es de 1 hora"),
+  assigned_hours: Yup.number()
+    .required("Las horas becarias son obligatorias")
+    .min(1, "La duración mínima es de 1 hora"),
   max_interns: Yup.number()
     .required("El número de becarios es obligatorio")
     .min(1, "Debe haber al menos un becario"),
   min_interns: Yup.number()
     .required("La cantidad mínima de becarios es obligatoria")
     .min(1, "Debe haber al menos 1 becario"),
-
   responsible_intern_id: Yup.number().notRequired(),
 });
 
