@@ -9,3 +9,16 @@ export interface Interns{
     created_at: Dayjs;
     updated_at: Dayjs;
 }
+
+export interface InternsInformation extends Interns{
+    id_intern:number,
+    name: string;
+    username: string;
+    lastname: string;
+    mothername: string;
+    password: string;
+    email: string;
+    phone: string;
+    code: number;  
+    
+} 

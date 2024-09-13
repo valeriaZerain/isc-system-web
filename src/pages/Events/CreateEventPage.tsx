@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
@@ -8,6 +8,9 @@ import {
   Button,
   Divider,
   IconButton,
+  InputLabel,
+  FormControl,
+  Autocomplete,
 } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -20,6 +23,8 @@ import ErrorDialog from "../../components/common/ErrorDialog.tsx";
 import SuccessDialog from "../../components/common/SucessDialog.tsx";
 import { Event } from "../../models/eventInterface.ts";
 import { createEventService } from "../../services/eventsService.ts";
+import { Interns } from "../../models/internsInterface.ts";
+import { getInternList } from "../../services/internService.ts";
 
 const validationSchema = Yup.object({
   title: Yup.string().required("El nombre del evento es obligatorio"),
@@ -50,9 +55,23 @@ const CreateForm = () => {
   const [message, setMessage] = useState("");
   const [successDialog, setSuccessDialog] = useState(false);
   const [errorDialog, setErrorDialog] = useState(false);
+  const [interns, setInterns] = useState<Interns[]>([]); 
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
+
+  useEffect(() => {
+    const fetchInterns = async () => {
+      try {
+        const response = await getInternList(); 
+        console.log(response)
+        setInterns(response.data); 
+      } catch (error) {
+        console.error("Error al cargar becarios", error);
+      }
+    };
+    fetchInterns();
+  }, []);
 
   const sucessDialogClose = () => {
     setSuccessDialog(false);
@@ -86,7 +105,7 @@ const CreateForm = () => {
       registration_deadline: "",
       start_cancellation_date: "",
       end_cancellation_date: "",
-      responsible_intern_id: 0,
+      responsible_intern_id: 0
     },
     validationSchema,
     onSubmit: async () => {
@@ -429,36 +448,49 @@ const CreateForm = () => {
                   </Grid>
                 </Grid>
               </Grid>
+            <Divider flexItem sx={{ mt: 2, mb: 2 }} />
             </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={2} sx={{ padding: 2 }}>
-                <Grid item xs={3}>
-                  <Typography variant="h6">Encargado</Typography>
+            <Grid container alignItems="center" style={{ marginLeft: '5%' }}>
+              <Grid item xs={4} style={{marginLeft:'-10px'}}>
+                  <Typography variant="h6" style={{ marginTop: '5px' }}>Supervisor</Typography>
                 </Grid>
-                <Grid item xs={9}>
-                  <TextField
-                    id="responsible_intern_id"
-                    name="responsible_intern_id"
-                    label="Encargado"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    type="number"
-                    value={formik.values.responsible_intern_id}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.responsible_intern_id &&
-                      Boolean(formik.errors.responsible_intern_id)
-                    }
-                    helperText={
-                      formik.touched.responsible_intern_id &&
-                      formik.errors.responsible_intern_id
-                    }
-                  />
+                <Grid item xs={7}>
+                      <FormControl fullWidth margin="normal">
+                        <InputLabel></InputLabel>
+                        <Autocomplete
+                          id="responsible_intern_id"
+                          name="responsible_intern_name"
+                          options={interns || []}
+                          getOptionLabel={(option) => `${option.code + '  ' + option.name + '  ' +option.lastname}`}
+                          value={interns.find (
+                            (intern) =>
+                              intern.id === formik.values.responsible_intern_id) || null}
+                          onChange={(event, newValue) =>
+                            formik.setFieldValue(
+                              "responsible_intern_id",
+                              newValue?.id || ""
+                            )
+                          }
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Supervisor"
+                              variant="outlined"
+                              error={
+                                formik.touched.responsible_intern_id &&
+                                Boolean(formik.errors.responsible_intern_id)
+                              }
+                              helperText={
+                                formik.touched.responsible_intern_id &&
+                                formik.errors.responsible_intern_id
+                              }
+                            />
+                          )}
+                        />
+                      </FormControl>
+                    </Grid>
                 </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+             </Grid>
           <Grid
             container
             spacing={2}
