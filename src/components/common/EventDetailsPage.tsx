@@ -23,32 +23,36 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
             {event.title}
           </Typography>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid item xs={8}>
+            <Grid item xs={6}>
               <Typography variant="body1" color="textSecondary">
-                <strong>Fecha:</strong> {event.date.format("DD/MM/YYYY")}
+                <strong>Fecha Inicial:</strong> {event.date.format("DD/MM/YYYY")}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Fecha Final:</strong> {event.endDate.format("DD/MM/YYYY")}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Encargado:</strong> {event.responsiblePerson}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Ubicación:</strong> {event.location}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Máximo Becarios:</strong> {event.maxParticipants}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Periodo de Inscripciones:</strong>{" "}
+                {event.registrationDeadline}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Horas Becarias:</strong> {event.scholarshipHours}
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 <strong>Duración:</strong> {event.duration} horas
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Horas becarias:</strong> {event.scholarshipHours} horas
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                <strong>Lugar:</strong> {event.location}
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                <strong>Máximo de becarios:</strong> {event.maxParticipants}
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                <strong>Máximo de suplentes:</strong> {event.minParticipants}
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography variant="h6" component="h2" color="primary">
-                Descripción:
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {event.description}
+                <strong>Solicitudes de Becarios:</strong> 
               </Typography>
             </Grid>
           </Grid>
