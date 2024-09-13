@@ -7,10 +7,13 @@ import * as Yup from "yup";
 import { ErrorMessage } from "../../components/common/ErrorMessage";
 import SpinModal from "../../components/common/SpinModal";
 import { useUserStore } from "../../store/store";
+import { roles } from "../../constants/roles";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { setUser } = useUserStore();
+  const { ADMIN, PROFESSOR, STUDENT, INTERN, PROGRAM_DIRECTOR, SUPERVISOR } =
+    roles;
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -33,12 +36,32 @@ const LoginPage = () => {
       try {
         const isAuthenticated = await authenticateUser(
           values.email,
-          values.password,
+          values.password
         );
         if (isAuthenticated) {
+          const dashboardInterns = [INTERN, SUPERVISOR];
+          const dashboardProcess = [
+            ADMIN,
+            STUDENT,
+            PROFESSOR,
+            PROGRAM_DIRECTOR,
+          ];
           localStorage.setItem("token", isAuthenticated.token);
           setUser(isAuthenticated);
-          navigate("/dashboard");
+          if (
+            isAuthenticated.roles.some((role) =>
+              dashboardProcess.includes(role)
+            )
+          ) {
+            navigate("/dashboard");
+          }
+          if (
+            isAuthenticated.roles.some((role) =>
+              dashboardInterns.includes(role)
+            )
+          ) {
+            navigate("/scholarshipHours");
+          }
         } else {
           setError("Credenciales incorrectas");
         }

@@ -11,14 +11,13 @@ export interface Interns{
 }
 
 export interface InternsInformation extends Interns{
-    id_intern:number,
-    name: string;
+    id_intern: number;
     username: string;
+    name: string;
     lastname: string;
     mothername: string;
     password: string;
     email: string;
+    code: number;
     phone: string;
-    code: number;  
-    
-} 
+}

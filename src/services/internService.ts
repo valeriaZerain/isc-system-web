@@ -51,3 +51,21 @@ export const getInternList = async () => {
     }
   }
 };
+
+
+export const getInternInformation = async (user_id: number) => {
+  try {
+    const response = await apiClient.get(`/interns/${user_id}/intern`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to get intern events" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};

@@ -6,49 +6,29 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
-import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
+import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import EventIcon from "@mui/icons-material/Event";
 import ViewListIcon from "@mui/icons-material/ViewList";
 
 import { roles } from "./roles";
-const { ADMIN, PROFESSOR, STUDENT } = roles;
+const { ADMIN, PROFESSOR, STUDENT, INTERN, PROGRAM_DIRECTOR, SUPERVISOR } =
+  roles;
 export const menu = [
-  // TODO: Diferencias entre los roles del menú temporal y el menú original:
-
-  // 1. Item "students":
-  //    - Menú temporal: roles: [ADMIN, PROFESSOR]
-  //    - Menú original: roles: [PROFESSOR]
-
-  // 2. Item "events":
-  //    - Menú temporal: roles: [ADMIN, STUDENT]
-  //    - Menú original: roles: [STUDENT]
-
-  // 3. Item "hours":
-  //    - Menú temporal: roles: [ADMIN]
-  //    - Menú original: Sin roles 
-
-  // 4. Item "programDirector":
-  //    - Menú temporal: roles: [ADMIN, PROFESSOR]
-  //    - Menú original: roles: [PROFESSOR]
-
-  // 5. Item "CompleteScholarship":
-  //    - Menú temporal: roles: [ADMIN]
-  //    - Menú original: Sin roles 
-
+  // TODO: check roles on sidebar
   {
     key: "dashboard",
     path: "/dashboard",
     text: "Dashboard",
     icon: <HomeIcon color="primary" />,
-    roles: [ADMIN, PROFESSOR],
+    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR],
   },
   {
     key: "process",
     path: "/process",
     text: "Procesos",
     icon: <ChecklistOutlinedIcon color="primary" />,
-    roles: [ADMIN, PROFESSOR],
+    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR],
   },
   {
     key: "professors",
@@ -62,42 +42,42 @@ export const menu = [
     path: "/students",
     text: "Estudiantes",
     icon: <SchoolOutlinedIcon color="primary" />,
-    roles: [ADMIN, PROFESSOR],
+    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR],
   },
   {
     key: "events",
     path: "/events",
     text: "Eventos",
     icon: <EventIcon color="primary" />,
-    roles: [ADMIN, STUDENT],
+    roles: [ADMIN, STUDENT, INTERN, SUPERVISOR],
   },
   {
     key: "hours",
     path: "/scholarshipHours",
     text: "Horas",
     icon: <AccessTimeIcon color="primary" />,
-    roles: [ADMIN],
+    roles: [ADMIN, INTERN, SUPERVISOR],
   },
   {
     key: "programDirector",
     path: "/programDirector",
-    text: "Jefe de carrera",
+    text: "Eventos",
     icon: <EmojiPeopleIcon color="primary" />,
-    roles: [ADMIN, PROFESSOR],
+    roles: [ADMIN, PROGRAM_DIRECTOR],
   },
   {
     key: "supervisor",
     path: "/supervisor",
     text: "Supervisor",
     icon: <SupervisedUserCircleIcon color="primary" />,
-    roles: [ADMIN, STUDENT]
+    roles: [ADMIN, SUPERVISOR],
   },
   {
     key: "CompleteScholarship",
     path: "/CompleteScholarshipHour",
     text: "Finalizar",
     icon: <PendingActionsIcon color="primary" />,
-    roles: [ADMIN],
+    roles: [ADMIN, PROGRAM_DIRECTOR],
   },
   {
     key: "administration",
@@ -113,10 +93,10 @@ export const menu = [
     icon: <SwitchAccountIcon color="primary" />,
   },
   {
-    key: "viewInterns", 
-    path: "/eventsByInterns", 
+    key: "viewInterns",
+    path: "/eventsByInterns",
     text: "Inscritos",
-    icon: <ViewListIcon color="primary" />, 
-    roles: [ADMIN, PROFESSOR],
+    icon: <ViewListIcon color="primary" />,
+    roles: [ADMIN, PROGRAM_DIRECTOR],
   },
 ];
