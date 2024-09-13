@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -25,6 +25,8 @@ import { EventCardProps } from "../../models/eventCardProps";
 import EventSubheader from "./EventSubheader";
 import { registerInternEventService } from "../../services/eventsService";
 import { useUserStore } from "../../store/store";
+import { InternsInformation } from "../../models/internsInterface";
+import { getInternInformation } from "../../services/internService";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -45,12 +47,26 @@ const EventCard = ({ event }: EventCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [internInfomation, setInternInfomation] = useState<InternsInformation> ();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [alert, setAlert] = useState<{
     severity: "success" | "error";
     message: string;
   } | null>(null);
   const user = useUserStore((state) => state.user);
+
+  const fetchIntern = async () => {
+    try {
+      const res = await getInternInformation(user!.id);
+      setInternInfomation(res.data);
+    } catch (error) {
+      console.error("Error fetching Intern:", error);
+    } 
+  };
+
+  useEffect(()=>{
+    fetchIntern();
+  },[]);
 
   const {
     id: id_event,
@@ -81,7 +97,8 @@ const EventCard = ({ event }: EventCardProps) => {
   };
 
   const handleConfirm = async () => {
-    const res = await registerInternEventService(id_event, user!.id);
+    const {id_intern} = internInfomation || {};
+    const res = await registerInternEventService(id_event, id_intern);
     if (res.success) {
       setAlert({
         severity: "success",

@@ -5,15 +5,17 @@ import GraphicHours from "./GraphicHours";
 import HoursCard from "../../components/common/HoursCard";
 import { Interns } from "../../models/internsInterface";
 import { getInternService } from "../../services/internService";
+import { useUserStore } from "../../store/store";
 
 
 
 function HoursPage() {
     const navigate = useNavigate();
     const [intern, setIntern] = useState<Interns>();
-
+    const user = useUserStore((state) => state.user);
+    
     const fetchIntern = async () => {
-        const res = await getInternService(1);
+        const res = await getInternService(user!.id);
         if(res.success){
             setIntern(res.data);
         }
