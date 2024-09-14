@@ -6,6 +6,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import { Tooltip } from "@mui/material";
 import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
 import {
@@ -40,20 +41,29 @@ const EventTable = () => {
   const columns: GridColDef[] = [
     {
       field: "start_date",
-      headerName: "Fecha Inicio",
+      headerName: "Fecha",
       headerAlign: "center",
       align: "center",
       flex: 1,
-      // TODO: change any to an interface
       valueGetter: (params: any) =>
         dayjs(params.startDate).format("DD/MM/YYYY"),
+      renderHeader: (params) => (
+        <Tooltip title="Fecha Inicio" placement="bottom">
+          <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
+        </Tooltip>
+      ),
     },
     {
       field: "title",
-      headerName: "Nombre del Evento",
+      headerName: "Nombre",
       headerAlign: "center",
       align: "center",
       flex: 1,
+      renderHeader: (params) => (
+        <Tooltip title="Nombre del evento" placement="bottom">
+          <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
+        </Tooltip>
+      ),
     },
     {
       field: "responsible_intern_id",
@@ -169,11 +179,12 @@ const EventTable = () => {
         </Button>
       }
     >
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 'auto', width: '100%', overflowX: 'auto' }}>
         <DataGrid
           rows={events || []}
           columns={columns}
           getRowId={(row) => row.id}
+          autoHeight
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
