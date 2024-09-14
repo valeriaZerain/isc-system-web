@@ -1,6 +1,10 @@
 import axios from "axios";
 import apiClient from "./apiInstance";
-import { Event } from "../models/eventInterface";
+import {
+  Event,
+  EventInterns,
+  EventInternsType,
+} from "../models/eventInterface";
 
 export const getEventsService = async () => {
   try {
@@ -151,12 +155,12 @@ export const updateEventService = async (id_event: number, event: Event) => {
 export const updateInternType = async (
   id_event: number,
   id_intern: number,
-  type: string
+  eventIntern: Partial<EventInterns>
 ) => {
   try {
     const response = await apiClient.put(
-      `events/${id_event}/update-status/${id_intern}`,
-      { status: type }
+      `events/${id_event}/update/${id_intern}`,
+      eventIntern
     );
     if (response.status == 200) {
       return response.data;

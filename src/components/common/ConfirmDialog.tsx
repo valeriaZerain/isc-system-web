@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { ReactNode } from "react";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -15,6 +16,7 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
   title: string;
   description: string;
+  children?: ReactNode;
 }
 
 const ConfirmDialog = ({
@@ -23,6 +25,7 @@ const ConfirmDialog = ({
   onConfirm,
   title,
   description,
+  children,
 }: ConfirmDialogProps) => {
   //TODO: refactor all confirm dialogs
   return (
@@ -59,6 +62,7 @@ const ConfirmDialog = ({
           {description}
         </Typography>
       </DialogContent>
+      {children}
       <DialogActions sx={{ justifyContent: "flex-end", padding: "24px" }}>
         <Button
           onClick={onClose}
