@@ -23,7 +23,7 @@ import ErrorDialog from "../../components/common/ErrorDialog.tsx";
 import SuccessDialog from "../../components/common/SucessDialog.tsx";
 import { Event } from "../../models/eventInterface.ts";
 import { createEventService } from "../../services/eventsService.ts";
-import { Interns } from "../../models/internsInterface.ts";
+import { InternsInformation } from "../../models/internsInterface.ts";
 import { getInternList } from "../../services/internService.ts";
 
 const validationSchema = Yup.object({
@@ -79,7 +79,7 @@ const CreateForm = () => {
   const [message, setMessage] = useState("");
   const [successDialog, setSuccessDialog] = useState(false);
   const [errorDialog, setErrorDialog] = useState(false);
-  const [interns, setInterns] = useState<Interns[]>([]); 
+  const [interns, setInterns] = useState<InternsInformation[]>([]); 
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
@@ -129,7 +129,7 @@ const CreateForm = () => {
       registration_deadline: "",
       start_cancellation_date: "",
       end_cancellation_date: "",
-      responsible_intern_id: 0
+      responsible_intern_id: -1
     },
     validationSchema,
     onSubmit: async () => {
@@ -152,7 +152,13 @@ const CreateForm = () => {
             formik.values.registration_deadline
           ),
         };
-        const res = await createEventService(valuesWithTimezone);
+
+        const { responsible_intern_id, ...eventData } = valuesWithTimezone;
+        const finalEventData = responsible_intern_id === -1
+        ? eventData
+        : { ...eventData, responsible_intern_id };
+        console.log(finalEventData)
+        const res = await createEventService(finalEventData);
         formik.resetForm();
         navigate("/programDirector");
         setMessage("Evento creado con éxito");
@@ -483,7 +489,6 @@ const CreateForm = () => {
                         <InputLabel></InputLabel>
                         <Autocomplete
                           id="responsible_intern_id"
-                          name="responsible_intern_name"
                           options={interns || []}
                           getOptionLabel={(option) => `${option.code + '  ' + option.name + '  ' +option.lastname}`}
                           value={interns.find (

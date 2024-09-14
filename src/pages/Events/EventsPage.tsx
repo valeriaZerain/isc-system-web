@@ -30,18 +30,20 @@ const EventsPage: React.FC = () => {
     const endOfMonth = today.endOf("month");
     return events?.filter((event) => {
       const eventStartDate = dayjs(event.start_date);
-
+      const eventEndDate = dayjs(event.end_date);
       if (tabValue === 0) {
         return (
           (eventStartDate.isAfter(startOfMonth, "day") ||
             eventStartDate.isSame(startOfMonth, "day")) &&
           (eventStartDate.isBefore(endOfMonth, "day") ||
-            eventStartDate.isSame(endOfMonth, "day"))
+            eventStartDate.isSame(endOfMonth, "day")) &&
+          eventEndDate.isAfter(today, "day")
         );
       } else if (tabValue === 1) {
-        return eventStartDate.isAfter(today, "day");
+        return eventStartDate.isAfter(today, "day") && eventEndDate.isAfter(today, "day");
       } else if (tabValue === 2) {
-        return eventStartDate.isBefore(today, "day");
+        return eventEndDate.isBefore(today, "day") || 
+        eventEndDate.isSame(today, "day");
       }
 
       return true;
