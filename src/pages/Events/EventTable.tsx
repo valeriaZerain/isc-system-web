@@ -200,7 +200,8 @@ const EventTable = () => {
         </Button>
       }
     >
-      <div style={{ height: 'auto', width: '100%', overflowX: 'auto' }}>
+      <div style={{ width: "100%", overflowX: "auto" }}>
+        <div style={{ minWidth: "800px" }}>
         <DataGrid
           rows={events || []}
           columns={columns}
@@ -242,6 +243,7 @@ const EventTable = () => {
             </Alert>
           </Snackbar>
         )}
+      </div>
       </div>
     </ContainerPage>
   );
