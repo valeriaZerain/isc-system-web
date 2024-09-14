@@ -46,7 +46,7 @@ const EventTable = () => {
       align: "center",
       flex: 1,
       valueGetter: (params: any) =>
-        dayjs(params.startDate).format("DD/MM/YYYY"),
+      dayjs(params.start_date).format("DD/MM/YYYY"),
       renderHeader: (params) => (
         <Tooltip title="Fecha Inicio" placement="bottom">
           <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>

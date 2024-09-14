@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -17,7 +17,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import CloseIcon from "@mui/icons-material/Close";
+import CancelIcon from "@mui/icons-material/Cancel";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import "../../style.css";
@@ -26,7 +26,7 @@ import EventSubheader from "./EventSubheader";
 import { registerInternEventService } from "../../services/eventsService";
 import { useUserStore } from "../../store/store";
 import { InternsInformation } from "../../models/internsInterface";
-import { getInternInformation } from "../../services/internService";
+import { getInternData, getInternInformation } from "../../services/internService";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -48,26 +48,18 @@ const EventCard = ({ event }: EventCardProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [internInfomation, setInternInfomation] = useState<InternsInformation> ();
+  const [internEventInfomation, setInternEventInfomation] = useState<InternsInformation> ();
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [responsible, setResponsible] = useState<String>("Ninguno")
   const [alert, setAlert] = useState<{
     severity: "success" | "error";
     message: string;
   } | null>(null);
+
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  
   const user = useUserStore((state) => state.user);
-
-  const fetchIntern = async () => {
-    try {
-      const res = await getInternInformation(user!.id);
-      setInternInfomation(res.data);
-    } catch (error) {
-      console.error("Error fetching Intern:", error);
-    } 
-  };
-
-  useEffect(()=>{
-    fetchIntern();
-  },[]);
-
   const {
     id: id_event,
     title: title,
@@ -79,8 +71,55 @@ const EventCard = ({ event }: EventCardProps) => {
     max_interns: max_interns,
     min_interns: min_interns,
     responsible_intern_id: responsible_intern_id,
-    //TODO: get responsible intern info
+    registration_deadline: registration_deadline,
   } = event;
+
+  const isRegistrationClosed = dayjs().isAfter(dayjs(registration_deadline));
+
+  const fetchIntern = async () => {
+    try {
+      const res = await getInternInformation(user!.id);
+      setInternInfomation(res.data);
+    } catch (error) {
+      console.error("Error fetching Intern:", error);
+    } 
+  };
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      const lineHeight = parseFloat(getComputedStyle(descriptionRef.current).lineHeight);
+      const height = descriptionRef.current.clientHeight;
+      const maxHeight = lineHeight * 2;
+
+      setIsOverflowing(height > maxHeight);
+    }
+  }, [description]);
+
+  const fetchInternEvent = async () => {
+    try {
+      if(responsible_intern_id){
+        const res = await getInternData(responsible_intern_id);
+        setInternEventInfomation(res.data);
+      }
+    } catch (error) {
+      console.error("Error fetching Intern:", error);
+    } 
+  }
+
+  useEffect(()=>{
+    fetchIntern();
+  },[]);
+
+  useEffect(()=>{
+    if(internEventInfomation){
+      setResponsible(internEventInfomation.name + " " + internEventInfomation.lastname)
+    }
+    
+  },[internEventInfomation]);
+
+  useEffect(()=>{
+    fetchInternEvent();
+  },[event]);
 
   dayjs.locale("es");
 
@@ -95,6 +134,7 @@ const EventCard = ({ event }: EventCardProps) => {
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
+  
 
   const handleConfirm = async () => {
     const {id_intern} = internInfomation || {};
@@ -152,8 +192,8 @@ const EventCard = ({ event }: EventCardProps) => {
           }}
         >
           {description}
-        </Typography>
-        {!showFullDescription && description && description.length > 0 && (
+      </Typography>
+        {!showFullDescription && description && description.length > 0 && isOverflowing && (
           <Typography
             fontSize={16}
             color="primary"
@@ -165,10 +205,16 @@ const EventCard = ({ event }: EventCardProps) => {
         )}
       </CardContent>
       <CardActions disableSpacing>
-        <Tooltip title="Registrarse">
-          <IconButton aria-label="registrarse" onClick={handleDialogOpen}>
-            <AddIcon />
-          </IconButton>
+        <Tooltip title={isRegistrationClosed ? "Registro cerrado" : "Registrarse"}>
+          <span>
+            <IconButton
+              aria-label="registrarse"
+              onClick={handleDialogOpen}
+              disabled={isRegistrationClosed}
+            >
+              <AddIcon />
+            </IconButton>
+          </span>
         </Tooltip>
         <ExpandMore
           expand={expanded}
@@ -192,26 +238,26 @@ const EventCard = ({ event }: EventCardProps) => {
             marginTop={2}
           >
             <strong>Fecha inicial: </strong>{" "}
-            {dayjs(start_date).format("DD/MM/YYYY HH:mm")}
+            {dayjs(start_date).format("DD/MM/YYYY")}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
             <strong>Fecha final: </strong>{" "}
-            {dayjs(end_date).format("DD/MM/YYYY HH:mm")}
+            {dayjs(end_date).format("DD/MM/YYYY")}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Encargado: </strong> {responsible_intern_id}
+            <strong>Supervisor: </strong> {responsible}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
             <strong>Duración: </strong> {duration_hours} horas
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Lugar: </strong> {location}
+            <strong>Ubicacion: </strong> {location}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Máximo de Becarios: </strong> {max_interns}
+            <strong>Máx. Becarios: </strong> {max_interns}
           </Typography>
           <Typography fontSize={15} color="text.primary" marginLeft={2}>
-            <strong>Máximo de Suplentes: </strong> {min_interns}
+            <strong>Min. Becarios: </strong> {min_interns}
           </Typography>
         </CardContent>
       </Collapse>
@@ -240,7 +286,7 @@ const EventCard = ({ event }: EventCardProps) => {
               color: (theme) => theme.palette.grey[500],
             }}
           >
-            <CloseIcon />
+            <CancelIcon color="primary"/>
           </IconButton>
         </DialogTitle>
         <DialogContent>
