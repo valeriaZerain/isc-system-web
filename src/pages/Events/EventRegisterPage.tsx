@@ -5,7 +5,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
@@ -14,41 +13,28 @@ import dayjs from "dayjs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Event, EventDetails } from "../../models/eventInterface";
+import { Chip, TextField } from "@mui/material";
+import { Event, EventDetails, FullEvent } from "../../models/eventInterface";
 import EventDetailsPage from "../../components/common/EventDetailsPage";
 import {
   getFullEventInformationService,
   updateInternType,
 } from "../../services/eventsService";
 import { internRegisterStates } from "../../constants/internRegisterStates";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+import { isNumber } from "@mui/x-data-grid/internals";
 
-interface FullEvent extends Event {
-  interns: any[];
-}
-
-const InternsListPage = () => {
+const EventRegisterPage = () => {
   const [addStudentOpen, setAddStudentOpen] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
   const [event, setEvent] = useState<FullEvent>();
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [students, setStudents] = useState<any[]>([]);
+  const [editHoursOpen, setEditHoursOpen] = useState(false);
+  const [newHours, setNewHours] = useState("");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const { id_event } = useParams<{ id_event: string }>();
   const { ACCEPTED, REJECTED, PENDING, RESERVE } = internRegisterStates;
-
-  const handleStatusChange = async (id_intern: number, newStatus: string) => {
-    if (!id_event) {
-      console.error("Could not find id_event");
-      return;
-    }
-    try {
-      await updateInternType(parseInt(id_event), id_intern, {
-        type: newStatus,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-    fetchFullEvent();
-  };
 
   const fetchFullEvent = async () => {
     const res = id_event && (await getFullEventInformationService(id_event));
@@ -146,37 +132,80 @@ const InternsListPage = () => {
     },
     {
       field: "status",
-      headerName: "Estado de inscripción",
+      headerName: "Estado",
       headerAlign: "center",
       align: "center",
       flex: 1,
+      renderCell: (params) => {
+        const colorMap: { [key: string]: any } = {
+          pending: "default",
+          accepted: "success",
+          reserve: "info",
+          rejected: "error",
+        };
+        const chipColor = colorMap[params.value];
+        return (
+          <Chip
+            label={params.value.toUpperCase()}
+            color={chipColor}
+            sx={{ fontWeight: 600 }}
+          />
+        );
+      },
+    },
+    {
+      field: "hours",
+      headerName: "Horas Becarias",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+      renderCell: (params) => `${params.value} horas`,
+    },
+    {
+      field: "edit",
+      headerName: "Editar",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+
       renderCell: (params) => (
-        <Select
-          fullWidth
-          value={params.value}
-          onChange={(e) => handleStatusChange(params.row.id, e.target.value)}
-          variant="standard"
-          sx={{
-            minHeight: 0,
-            lineHeight: 1.5,
-            padding: "2px 8px",
-            "& .MuiSelect-select": {
-              padding: 0,
-            },
-            "& .MuiInputBase-root": {
-              margin: 0,
-            },
-          }}
+        <Button
+          variant="contained"
+          onClick={() => handleEditHoursOpen(params.row.id, params.row.hours)}
         >
-          <MenuItem value={ACCEPTED}>Aceptado</MenuItem>
-          <MenuItem value={REJECTED}>Rechazado</MenuItem>
-          <MenuItem value={RESERVE}>Suplente</MenuItem>
-          <MenuItem value={PENDING}>Pendiente</MenuItem>
-        </Select>
+          Editar
+        </Button>
       ),
     },
   ];
+  const handleHoursSave = async () => {
+    if (!id_event || !selectedId) {
+      console.error("Error on ids");
+      return;
+    }
+    try {
+      await updateInternType(parseInt(id_event), selectedId, {
+        worked_hours: parseInt(newHours),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+    fetchFullEvent();
+    setEditHoursOpen(false);
+    setSelectedId(null);
+  };
 
+  const handleEditHoursOpen = (id: number, currentHours: string) => {
+    setSelectedId(id);
+    setNewHours(currentHours);
+    setEditHoursOpen(true);
+  };
+
+  const handleEditHoursClose = (event?: object, reason?: string) => {
+    if (reason && reason === "backdropClick") return;
+    setEditHoursOpen(false);
+    setSelectedId(null);
+  };
   return (
     <div style={{ position: "relative", height: "100vh", padding: "19px" }}>
       <IconButton
@@ -206,7 +235,7 @@ const InternsListPage = () => {
       >
         Agregar Estudiante
       </Button>
-      {eventDetails && (
+      {event && (
         <EventDetailsPage
           event={event}
           children={
@@ -225,7 +254,8 @@ const InternsListPage = () => {
                   columnHeader: "bg-gray-200 dark:bg-gray-800",
                   cell: "bg-white dark:bg-gray-800",
                   row: "bg-white dark:bg-gray-800",
-                  columnHeaderTitle: "!font-bold text-center",
+                  columnHeaderTitle:
+                    "!font-bold text-center whitespace-normal p-2",
                 }}
               />
               <Dialog
@@ -290,6 +320,23 @@ const InternsListPage = () => {
                   </Button>
                 </DialogActions>
               </Dialog>
+              <ConfirmDialog
+                open={editHoursOpen}
+                onClose={handleEditHoursClose}
+                onConfirm={handleHoursSave}
+                title={"Editar horas becarias"}
+                description={"Ingrese el nuevo valor asignado"}
+              >
+                <TextField
+                  type="number"
+                  value={newHours}
+                  onChange={(e) => setNewHours(e.target.value)}
+                  label="Horas Becarias"
+                  margin="normal"
+                  sx={{ marginRight: 2, marginLeft: 2 }}
+                  inputProps={{ min: 0 }}
+                />
+              </ConfirmDialog>
             </div>
           }
         />
@@ -298,4 +345,4 @@ const InternsListPage = () => {
   );
 };
 
-export default InternsListPage;
+export default EventRegisterPage;

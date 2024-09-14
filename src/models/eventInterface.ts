@@ -46,3 +46,14 @@ export interface FullEvent extends Event {
 export interface EventInternsType extends Event {
   type: string;
 }
+
+export interface EventInterns {
+  id_intern: number;
+  id_event: number;
+  worked_hours: number;
+  type: string;
+  attendance: boolean;
+  notes: string;
+  created_at: Dayjs;
+  updated_at: Dayjs;
+}

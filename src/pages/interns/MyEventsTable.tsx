@@ -17,7 +17,10 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
 import { useUserStore } from "../../store/store";
-import { getInternEvents, getInternInformation } from "../../services/internService";
+import {
+  getInternEvents,
+  getInternInformation,
+} from "../../services/internService";
 import { deleteInternFromEventService } from "../../services/eventsService";
 import { EventInternsType } from "../../models/eventInterface";
 import { InternsInformation } from "../../models/internsInterface";
@@ -38,11 +41,12 @@ const MyEventsTable = () => {
       accepted: "ACEPTADO",
       rejected: "RECHAZADO",
       reserve: "SUSPLENTE",
-      pending: "PENDIENTE"
+      pending: "PENDIENTE",
     };
     return statusMap[status.toLowerCase()] || status;
   };
-  const [internInfomation, setInternInfomation] = useState<InternsInformation> ();
+  const [internInfomation, setInternInfomation] =
+    useState<InternsInformation>();
   const user = useUserStore((state) => state.user);
   const [events, setEvents] = useState<EventInternsType[]>();
   const [rows, setRows] = useState<RowData[]>([]);
@@ -60,7 +64,7 @@ const MyEventsTable = () => {
   };
 
   const fetchMyEvents = async () => {
-    if(internInfomation?.id_intern){
+    if (internInfomation?.id_intern) {
       const res = await getInternEvents(internInfomation?.id_intern);
       if (res.success) {
         setEvents(res.data);
@@ -177,7 +181,7 @@ const MyEventsTable = () => {
             cursor: "default",
           }}
           disabled
-          >
+        >
           {params.row.status}
         </Button>
       ),
@@ -199,18 +203,20 @@ const MyEventsTable = () => {
       setInternInfomation(res.data);
     } catch (error) {
       console.error("Error fetching Intern:", error);
-    } 
+    }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchIntern();
-  },[]);
-  
+  }, []);
 
   const handleConfirmDelete = async () => {
-    if (selectedEventId === null) return;
+    if (!selectedEventId) return;
     if (internInfomation?.id_intern) {
-      const res = await deleteInternFromEventService(selectedEventId, internInfomation.id_intern);
+      const res = await deleteInternFromEventService(
+        selectedEventId,
+        internInfomation.id_intern
+      );
       if (res.success) {
         setAlert({
           severity: "success",
@@ -229,7 +235,7 @@ const MyEventsTable = () => {
         message: "No se encontró el ID del becario.",
       });
     }
-    
+
     setSnackbarOpen(true);
     setDialogOpen(false);
   };
@@ -364,4 +370,3 @@ export default MyEventsTable;
 function setInternInfomation(data: any) {
   throw new Error("Function not implemented.");
 }
-

@@ -7,21 +7,30 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Event } from "../../models/eventInterface";
+import { getFullEventInformationService } from "../../services/eventsService";
 
-const CompleteScholarshipHourEventCard = ({ event }) => {
+interface CSHCardProps {
+  event: Event;
+  children?: ReactNode;
+}
+const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
   const {
-    id_event,
-    name,
+    id,
+    title,
     description,
-    validatedHours,
-    startDate,
-    duration,
-    place,
-    maxInterns,
-    minInterns,
+    assigned_hours,
+    start_date,
+    duration_hours,
+    location,
+    max_interns,
+    min_interns,
   } = event;
+  const navigate = useNavigate();
+  dayjs.locale("es");
+
   const [dialogConfirmationFinishEvent, setDialogConfirmationFinishEventOpen] =
     useState(false);
   const [
@@ -29,13 +38,25 @@ const CompleteScholarshipHourEventCard = ({ event }) => {
     setDialogShowTheResultsFinishEventOpen,
   ] = useState(false);
 
-  dayjs.locale("es");
+  const fetchFullEvent = () => {
+    if (!id) {
+      console.error("Could not event with such id");
+      return;
+    }
+    try {
+      const res = getFullEventInformationService(id.toString());
 
-  const navigate = useNavigate();
+    } catch (error) {
+      console.error("Could not fetch event", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFullEvent();
+  });
 
   const goToShowEvent = () => {
-    //TODO: use api
-    navigate(`/interns/2`);
+    navigate(`/eventRegisters/${id}`);
   };
 
   const handleDialogConfirmationFinishEventOpen = () => {
@@ -70,27 +91,27 @@ const CompleteScholarshipHourEventCard = ({ event }) => {
               color="text.primary"
               sx={{ fontWeight: "bold" }}
             >
-              {name}
+              {title}
             </Typography>
           </Grid>
           <Grid item xs={12} md={3.5}>
             <Typography fontSize={17} color="text.primary">
-              <strong>Fecha:</strong> {dayjs(startDate).format("DD/MM/YYYY")}
+              <strong>Fecha:</strong> {dayjs(start_date).format("DD/MM/YYYY")}
             </Typography>
             <Typography fontSize={17} color="text.primary">
-              <strong>Duración:</strong> {duration}
+              <strong>Duración:</strong> {duration_hours}
             </Typography>
             <Typography fontSize={17} color="text.primary">
-              <strong>Horas becarias:</strong> {validatedHours}
+              <strong>Horas becarias:</strong> {assigned_hours}
             </Typography>
             <Typography fontSize={17} color="text.primary">
-              <strong>Lugar:</strong> {place}
+              <strong>Lugar:</strong> {location}
             </Typography>
             <Typography fontSize={17} color="text.primary">
-              <strong>Máximo de becarios:</strong> {maxInterns}
+              <strong>Máximo de becarios:</strong> {max_interns}
             </Typography>
             <Typography fontSize={17} color="text.primary">
-              <strong>Máximo de suplentes:</strong> {minInterns}
+              <strong>Máximo de suplentes:</strong> {min_interns}
             </Typography>
           </Grid>
           <Grid item xs={12} md={5}>
@@ -201,7 +222,7 @@ const CompleteScholarshipHourEventCard = ({ event }) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {name} finalizado exitosamente.
+          {title} finalizado exitosamente.
         </DialogTitle>
         <DialogActions sx={{ justifyContent: "center" }}>
           <Button onClick={handleConfirmationEnding} color="primary" autoFocus>

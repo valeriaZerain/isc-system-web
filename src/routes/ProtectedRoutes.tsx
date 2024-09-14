@@ -33,6 +33,7 @@ import EventHistory from "../components/cards/EventHistory";
 import ViewInternSupervisor from "../pages/supervisor/ViewInternSupervisor";
 import EventsByInternsPage from "../pages/interns/EventsByInterns";
 import { roles } from "../constants/roles";
+import EventRegisterPage from "../pages/Events/EventRegisterPage";
 
 function loader() {
   return getProcess();
@@ -255,6 +256,14 @@ const protectedRoutes = [
         ),
       },
       {
+        path: "/eventRegisters/:id_event",
+        element: (
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
+            <EventRegisterPage />
+          </RoleGuard>
+        ),
+      },
+      {
         path: "/administration",
         element: <AdministratorPage />,
       },
@@ -281,7 +290,7 @@ const protectedRoutes = [
       {
         path: "/eventHistory",
         element: (
-          <RoleGuard allowedRoles={[ADMIN, STUDENT,INTERN]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN]}>
             <EventHistory />
           </RoleGuard>
         ),
