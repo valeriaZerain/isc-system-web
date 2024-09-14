@@ -30,7 +30,6 @@ const EventTable = () => {
   const fetchEvents = async () => {
     const res = await getEventsInformationsService();
     if (res.success) {
-      console.log(res.data)
       setEvents(res.data);
     }
   };
