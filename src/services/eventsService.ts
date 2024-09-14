@@ -147,3 +147,27 @@ export const updateEventService = async (id_event: number, event: Event) => {
     }
   }
 };
+
+export const updateInternType = async (
+  id_event: number,
+  id_intern: number,
+  type: string
+) => {
+  try {
+    const response = await apiClient.put(
+      `events/${id_event}/update-status/${id_intern}`,
+      { status: type }
+    );
+    if (response.status == 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to update intern type from event" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};

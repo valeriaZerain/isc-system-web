@@ -16,9 +16,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Event, EventDetails } from "../../models/eventInterface";
 import EventDetailsPage from "../../components/common/EventDetailsPage";
-import { getFullEventInformationService } from "../../services/eventsService";
+import {
+  getFullEventInformationService,
+  updateInternType,
+} from "../../services/eventsService";
 import { internRegisterStates } from "../../constants/internRegisterStates";
-import { InternsInformation } from "../../models/internsInterface";
 
 interface FullEvent extends Event {
   interns: any[];
@@ -33,12 +35,17 @@ const InternsListPage = () => {
   const { id_event } = useParams<{ id_event: string }>();
   const { ACCEPTED, REJECTED, PENDING, RESERVE } = internRegisterStates;
 
-  const handleStatusChange = (id: number, newStatus: string) => {
-    setStudents((prevStudents) =>
-      prevStudents.map((student) =>
-        student.id === id ? { ...student, status: newStatus } : student
-      )
-    );
+  const handleStatusChange = async (id_intern: number, newStatus: string) => {
+    if (!id_event) {
+      console.error("Could not find id_event");
+      return;
+    }
+    try {
+      await updateInternType(parseInt(id_event), id_intern, newStatus);
+    } catch (error) {
+      console.error(error);
+    }
+    fetchFullEvent();
   };
 
   const fetchFullEvent = async () => {
