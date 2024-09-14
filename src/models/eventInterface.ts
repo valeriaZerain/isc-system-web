@@ -27,6 +27,7 @@ export interface Event {
   location: string;
   max_interns: number;
   min_interns: number;
+  is_finished: boolean;
   responsible_intern_id?: number;
   registration_deadline: string;
   start_cancellation_date?: string;

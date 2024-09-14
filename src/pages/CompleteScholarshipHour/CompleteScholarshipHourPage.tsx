@@ -1,7 +1,9 @@
 import { Grid } from "@mui/material";
-import CompleteScholarshipHourEventCard from "../../components/cards/CompleteScholarshipHourEventCard";
 import { useState, useEffect } from "react";
 import { Event } from "../../models/eventInterface";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CompleteScholarshipHourEventCard from "../../components/cards/CompleteScholarshipHourEventCard";
 import { getEventsService } from "../../services/eventsService";
 
 const CompleteScholarshipHourPage = () => {
@@ -20,6 +22,7 @@ const CompleteScholarshipHourPage = () => {
   }, []);
 
   return (
+    //TODO: filter finished events and add tabs
     <>
       <Grid
         container

@@ -14,15 +14,13 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Chip, TextField } from "@mui/material";
-import { Event, EventDetails, FullEvent } from "../../models/eventInterface";
+import { EventDetails, FullEvent } from "../../models/eventInterface";
 import EventDetailsPage from "../../components/common/EventDetailsPage";
 import {
   getFullEventInformationService,
   updateInternType,
 } from "../../services/eventsService";
-import { internRegisterStates } from "../../constants/internRegisterStates";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
-import { isNumber } from "@mui/x-data-grid/internals";
 
 const EventRegisterPage = () => {
   const [addStudentOpen, setAddStudentOpen] = useState(false);
@@ -34,7 +32,6 @@ const EventRegisterPage = () => {
   const [newHours, setNewHours] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const { id_event } = useParams<{ id_event: string }>();
-  const { ACCEPTED, REJECTED, PENDING, RESERVE } = internRegisterStates;
 
   const fetchFullEvent = async () => {
     const res = id_event && (await getFullEventInformationService(id_event));
@@ -137,17 +134,19 @@ const EventRegisterPage = () => {
       align: "center",
       flex: 1,
       renderCell: (params) => {
-        const colorMap: { [key: string]: any } = {
-          pending: "default",
-          accepted: "success",
-          reserve: "info",
-          rejected: "error",
+        const statusMap: { [key: string]: any } = {
+          pending: { label: "PENDIENTE", color: "default" },
+          accepted: { label: "ACEPTADO", color: "success" },
+          reserve: { label: "RESERVA", color: "info" },
+          rejected: { label: "RECHAZADO", color: "error" },
         };
-        const chipColor = colorMap[params.value];
+
+        const status = statusMap[params.value];
+
         return (
           <Chip
-            label={params.value.toUpperCase()}
-            color={chipColor}
+            label={status.label}
+            color={status.color}
             sx={{ fontWeight: 600 }}
           />
         );
@@ -201,7 +200,7 @@ const EventRegisterPage = () => {
     setEditHoursOpen(true);
   };
 
-  const handleEditHoursClose = (event?: object, reason?: string) => {
+  const handleEditHoursClose = (_?: object, reason?: string) => {
     if (reason && reason === "backdropClick") return;
     setEditHoursOpen(false);
     setSelectedId(null);

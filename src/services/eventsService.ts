@@ -1,10 +1,6 @@
 import axios from "axios";
 import apiClient from "./apiInstance";
-import {
-  Event,
-  EventInterns,
-  EventInternsType,
-} from "../models/eventInterface";
+import { Event, EventInterns } from "../models/eventInterface";
 
 export const getEventsService = async () => {
   try {
@@ -166,6 +162,23 @@ export const updateInternType = async (
       return response.data;
     } else {
       return { error: "Failed to update intern type from event" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const finishEventService = async (eventId: number) => {
+  try {
+    const response = await apiClient.put(`events/finish/${eventId}`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to finish event" };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
