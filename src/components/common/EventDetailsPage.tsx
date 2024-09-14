@@ -1,14 +1,18 @@
 import { ReactNode } from "react";
 import { Container, Grid, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import { EventDetails } from "../../models/eventInterface";
+import { FullEvent } from "../../models/eventInterface";
+import { InternsInformation } from "../../models/internsInterface";
+import { internRegisterStates } from "../../constants/internRegisterStates";
+import dayjs from "dayjs";
 
 interface TablePageProps {
-  event: EventDetails;
+  event: FullEvent;
   children: ReactNode;
 }
 
 const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
+  const { PENDING } = internRegisterStates;
   return event ? (
     <Container fixed>
       <Grid container spacing={3}>
@@ -23,32 +27,48 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
             {event.title}
           </Typography>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid item xs={8}>
+            <Grid item xs={6}>
               <Typography variant="body1" color="textSecondary">
-                <strong>Fecha:</strong> {event.date.format("DD/MM/YYYY")}
+                <strong>Fecha Inicial:</strong>{" "}
+                {dayjs(event.start_date).format("DD/MM/YYYY")}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Duración:</strong> {event.duration} horas
+                <strong>Fecha Final:</strong>{" "}
+                {dayjs(event.end_date).format("DD/MM/YYYY")}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Horas becarias:</strong> {event.scholarshipHours} horas
+                <strong>Encargado:</strong> {event.responsible_intern_id}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Lugar:</strong> {event.location}
+                <strong>Ubicación:</strong> {event.location}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Máximo de becarios:</strong> {event.maxParticipants}
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                <strong>Máximo de suplentes:</strong> {event.minParticipants}
+                <strong>Máximo Becarios:</strong> {event.max_interns}
               </Typography>
             </Grid>
-            <Grid item xs={4}>
-              <Typography variant="h6" component="h2" color="primary">
-                Descripción:
+            <Grid item xs={6}>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Periodo de Inscripciones:</strong>{" "}
+                {dayjs(event.start_cancellation_date).format("DD/MM/YYYY")} -{" "}
+                {dayjs(event.end_cancellation_date).format("DD/MM/YYYY")}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {event.description}
+                <strong>Horas Becarias:</strong> {event.assigned_hours} horas
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>Duración:</strong> {event.duration_hours} horas
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                <strong>
+                  Solicitudes de Becarios:{" "}
+                  {event.interns.reduce((acc: number, intern) => {
+                    if (intern.type == PENDING) {
+                      return acc + 1;
+                    } else {
+                      return acc;
+                    }
+                  }, 0)}
+                </strong>
               </Typography>
             </Grid>
           </Grid>
