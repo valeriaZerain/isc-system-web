@@ -1,4 +1,5 @@
 import { Dayjs } from "dayjs";
+import { InternsInformation } from "./internsInterface";
 
 // TODO: refactor EventDetails ocurrences to use Event
 export interface EventDetails {
@@ -39,7 +40,7 @@ export interface EventInformations extends Event {
   pending_interns: string;
 }
 export interface FullEvent extends Event {
-  interns: [];
+  interns: InternsInformation[];
 }
 
 export interface EventInternsType extends Event {

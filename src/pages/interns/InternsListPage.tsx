@@ -17,6 +17,8 @@ import { useParams } from "react-router-dom";
 import { Event, EventDetails } from "../../models/eventInterface";
 import EventDetailsPage from "../../components/common/EventDetailsPage";
 import { getFullEventInformationService } from "../../services/eventsService";
+import { internRegisterStates } from "../../constants/internRegisterStates";
+import { InternsInformation } from "../../models/internsInterface";
 
 interface FullEvent extends Event {
   interns: any[];
@@ -29,6 +31,7 @@ const InternsListPage = () => {
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [students, setStudents] = useState<any[]>([]);
   const { id_event } = useParams<{ id_event: string }>();
+  const { ACCEPTED, REJECTED, PENDING, RESERVE } = internRegisterStates;
 
   const handleStatusChange = (id: number, newStatus: string) => {
     setStudents((prevStudents) =>
@@ -67,13 +70,13 @@ const InternsListPage = () => {
   const setupStudents = () => {
     const studentList =
       event &&
-      event.interns.map((intern: any) => ({
-        id: intern.id_interns,
+      event.interns.map((intern) => ({
+        id: intern.id_intern,
         name: `${intern.name} ${intern.lastname} ${intern.mothername}`,
         code: intern.code,
         time: dayjs(intern.registration_date).format("DD/MM/YYYY HH:mm"),
-        status: intern.status || "pending",
-        hours: event.assigned_hours.toString(),
+        status: intern.type,
+        hours: intern.worked_hours.toString(),
       }));
     setStudents(studentList || []);
   };
@@ -107,7 +110,7 @@ const InternsListPage = () => {
     handleAddStudentClose();
   };
 
-  const availableStudents = students; 
+  const availableStudents = students;
 
   const columns: GridColDef[] = [
     {
@@ -156,10 +159,10 @@ const InternsListPage = () => {
             },
           }}
         >
-          <MenuItem value="accepted">Aceptado</MenuItem>
-          <MenuItem value="rejected">Rechazado</MenuItem>
-          <MenuItem value="reserve">Suplente</MenuItem>
-          <MenuItem value="pending">Pendiente</MenuItem>
+          <MenuItem value={ACCEPTED}>Aceptado</MenuItem>
+          <MenuItem value={REJECTED}>Rechazado</MenuItem>
+          <MenuItem value={RESERVE}>Suplente</MenuItem>
+          <MenuItem value={PENDING}>Pendiente</MenuItem>
         </Select>
       ),
     },
@@ -196,7 +199,7 @@ const InternsListPage = () => {
       </Button>
       {eventDetails && (
         <EventDetailsPage
-          event={eventDetails}
+          event={event}
           children={
             <div style={{ marginTop: "60px", height: 400, width: "100%" }}>
               <DataGrid
@@ -225,7 +228,11 @@ const InternsListPage = () => {
               >
                 <DialogTitle id="add-student-dialog-title">
                   Agregar Nuevo Becario
-                  <Typography variant="subtitle2" color="textSecondary" style={{ marginTop: '8px' }}>
+                  <Typography
+                    variant="subtitle2"
+                    color="textSecondary"
+                    style={{ marginTop: "8px" }}
+                  >
                     Selecciona los becarios para agregar
                   </Typography>
                 </DialogTitle>
@@ -248,7 +255,9 @@ const InternsListPage = () => {
                       </MenuItem>
                     ))
                   ) : (
-                    <Typography>No hay becarios disponibles para agregar.</Typography>
+                    <Typography>
+                      No hay becarios disponibles para agregar.
+                    </Typography>
                   )}
                 </DialogContent>
                 <DialogActions>
