@@ -67,24 +67,39 @@ const EventTable = () => {
     },
     {
       field: "responsible_intern_id",
-      headerName: "Supervisor del evento",
+      headerName: "Supervisor",
       headerAlign: "center",
       align: "center",
       flex: 1,
+      renderHeader: (params) => (
+        <Tooltip title="Supervisor del Evento" placement="bottom">
+          <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
+        </Tooltip>
+      ),
     },
     {
       field: "pending_interns",
-      headerName: "Solicitudes de Becarios",
+      headerName: "Solicitudes",
       headerAlign: "center",
       align: "center",
       flex: 1,
+      renderHeader: (params) => (
+        <Tooltip title="Solicitudes de Becarios" placement="bottom">
+          <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
+        </Tooltip>
+      ),
     },
     {
       field: "accepted_interns",
-      headerName: "Becarios Seleccionados",
+      headerName: "Becarios",
       headerAlign: "center",
       align: "center",
       flex: 1,
+      renderHeader: (params) => (
+        <Tooltip title="Becarios Seleccionados" placement="bottom">
+          <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
+        </Tooltip>
+      ),
     },
     {
       field: "actions",
@@ -94,27 +109,33 @@ const EventTable = () => {
       flex: 1,
       renderCell: (params) => (
         <div>
-          <IconButton
-            color="primary"
-            aria-label="ver"
-            onClick={() => handleView(params.row.id)}
-          >
-            <VisibilityIcon />
-          </IconButton>
-          <IconButton
-            color="primary"
-            aria-label="editar"
-            onClick={() => handleEdit(params.row.id)}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            color="secondary"
-            aria-label="eliminar"
-            onClick={() => handleClickOpen(params.row.id)}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title="Ver detalles" placement="bottom">
+            <IconButton
+              color="primary"
+              aria-label="ver"
+              onClick={() => handleView(params.row.id)}
+            >
+              <VisibilityIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Editar evento" placement="bottom">
+            <IconButton
+              color="primary"
+              aria-label="editar"
+              onClick={() => handleEdit(params.row.id)}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Eliminar evento" placement="bottom">
+            <IconButton
+              color="secondary"
+              aria-label="eliminar"
+              onClick={() => handleClickOpen(params.row.id)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       ),
     },
