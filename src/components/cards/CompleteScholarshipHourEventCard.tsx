@@ -1,16 +1,17 @@
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogTitle from "@mui/material/DialogTitle";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../models/eventInterface";
-import { getFullEventInformationService } from "../../services/eventsService";
+import {
+  finishEventService,
+  getFullEventInformationService,
+} from "../../services/eventsService";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 interface CSHCardProps {
   event: Event;
@@ -31,12 +32,7 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
   const navigate = useNavigate();
   dayjs.locale("es");
 
-  const [dialogConfirmationFinishEvent, setDialogConfirmationFinishEventOpen] =
-    useState(false);
-  const [
-    dialogShowTheResultsFinishEvent,
-    setDialogShowTheResultsFinishEventOpen,
-  ] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   const fetchFullEvent = () => {
     if (!id) {
@@ -45,7 +41,6 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
     }
     try {
       const res = getFullEventInformationService(id.toString());
-
     } catch (error) {
       console.error("Could not fetch event", error);
     }
@@ -55,30 +50,25 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
     fetchFullEvent();
   });
 
-  const goToShowEvent = () => {
+  const goToEditHours = () => {
     navigate(`/eventRegisters/${id}`);
   };
 
-  const handleDialogConfirmationFinishEventOpen = () => {
-    setDialogConfirmationFinishEventOpen(true);
+  const handleConfirmDialogOpen = () => {
+    setConfirmDialogOpen(true);
   };
 
-  const handleDialogShowTheResultsFinishEventOpen = () => {
-    setDialogShowTheResultsFinishEventOpen(true);
-    setDialogConfirmationFinishEventOpen(false);
-  };
-
-  const handleDialogConfirmationFinishEventClose = () => {
-    setDialogConfirmationFinishEventOpen(false);
-  };
-
-  const handleDialogShowTheResultsFinishEventClose = () => {
-    setDialogShowTheResultsFinishEventOpen(false);
-  };
-
-  const handleConfirmationEnding = () => {
-    setDialogShowTheResultsFinishEventOpen(false);
-    navigate(`/interns/2`);
+  const handleConfirmDialogFinish = async () => {
+    try {
+      if (!id) {
+        console.error("Id is undefined");
+        return;
+      }
+      const res = await finishEventService(id);
+    } catch (error) {
+      console.error("Error while finishing event");
+    }
+    setConfirmDialogOpen(false);
   };
 
   return (
@@ -134,7 +124,7 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
               variant="contained"
               color="secondary"
               sx={{ width: 250 }}
-              onClick={goToShowEvent}
+              onClick={goToEditHours}
             >
               Solicitudes de inscripción
             </Button>
@@ -143,7 +133,7 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
               variant="contained"
               color="error"
               sx={{ marginTop: 3, width: 180 }}
-              onClick={handleDialogConfirmationFinishEventOpen}
+              onClick={handleConfirmDialogOpen}
             >
               Finalizar evento
             </Button>
@@ -151,85 +141,16 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
         </Grid>
       </CardContent>
 
-      <Dialog
-        open={dialogConfirmationFinishEvent}
-        onClose={(_, reason) => {
-          if (reason !== "backdropClick") {
-            handleDialogConfirmationFinishEventClose();
-          }
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          sx={{ textAlign: "center", position: "relative" }}
-        >
-          <Typography variant="h5" align="center" sx={{ fontWeight: "bold" }}>
-            Seguro de finalizar evento
-          </Typography>
-          <Button
-            onClick={handleDialogConfirmationFinishEventClose}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              minWidth: 32,
-              minHeight: 32,
-              padding: 0,
-              color: "grey",
-              fontSize: "1.25rem",
-            }}
-          >
-            &#10005;
-          </Button>
-          <Typography variant="body1" sx={{ marginTop: 1 }}>
-            ¿Estás seguro de que deseas finalizar este evento? Esta acción no se
-            puede deshacer.
-          </Typography>
-        </DialogTitle>
-        <DialogActions
-          sx={{ justifyContent: "flex-end", padding: "16px", gap: 2 }}
-        >
-          <Button
-            onClick={handleDialogShowTheResultsFinishEventOpen}
-            color="error"
-            variant="contained"
-            sx={{ textTransform: "none", fontWeight: "bold" }}
-          >
-            Finalizar
-          </Button>
-          <Button
-            onClick={handleDialogConfirmationFinishEventClose}
-            color="primary"
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              backgroundColor: "primary",
-              color: "white",
-            }}
-          >
-            Cancelar
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={dialogShowTheResultsFinishEvent}
-        onClose={handleDialogShowTheResultsFinishEventClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {title} finalizado exitosamente.
-        </DialogTitle>
-        <DialogActions sx={{ justifyContent: "center" }}>
-          <Button onClick={handleConfirmationEnding} color="primary" autoFocus>
-            Ver resultados
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmDialog
+        open={confirmDialogOpen}
+        onClose={goToEditHours}
+        onConfirm={handleConfirmDialogFinish}
+        title={"Finalizar evento"}
+        description={
+          "¿Estás seguro de que deseas finalizar este evento? Esta acción no se puede deshacer"
+        }
+        secondaryButtonText="Editar horas"
+      />
     </Card>
   );
 };

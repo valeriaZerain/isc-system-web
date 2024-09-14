@@ -17,6 +17,8 @@ interface ConfirmDialogProps {
   title: string;
   description: string;
   children?: ReactNode;
+  primaryButtonText?: string;
+  secondaryButtonText?: string;
 }
 
 const ConfirmDialog = ({
@@ -26,6 +28,8 @@ const ConfirmDialog = ({
   title,
   description,
   children,
+  primaryButtonText,
+  secondaryButtonText,
 }: ConfirmDialogProps) => {
   //TODO: refactor all confirm dialogs
   return (
@@ -75,7 +79,7 @@ const ConfirmDialog = ({
             minWidth: "120px",
           }}
         >
-          Cancelar
+          {secondaryButtonText || "Cancelar"}
         </Button>
         <Button
           onClick={onConfirm}
@@ -87,7 +91,7 @@ const ConfirmDialog = ({
             minWidth: "120px",
           }}
         >
-          Confirmar
+          {primaryButtonText || "Confirmar"}
         </Button>
       </DialogActions>
     </Dialog>
