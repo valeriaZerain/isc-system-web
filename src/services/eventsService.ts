@@ -36,6 +36,24 @@ export const getEventsInformationsService = async () => {
   }
 };
 
+export const getEventsInformations = async (id_event: number, id_becario:number) => {
+  try {
+    const response = await apiClient.get(`/events/${id_event}/status/${id_becario}`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to get events" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+
 export const registerInternEventService = async (
   id_event: number,
   id_intern: number

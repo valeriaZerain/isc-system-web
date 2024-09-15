@@ -126,6 +126,7 @@ const CreateForm = () => {
       location: "",
       max_interns: 0,
       min_interns: 0,
+      is_finished: false,
       registration_deadline: "",
       start_cancellation_date: "",
       end_cancellation_date: "",

@@ -23,7 +23,7 @@ import "dayjs/locale/es";
 import "../../style.css";
 import { EventCardProps } from "../../models/eventCardProps";
 import EventSubheader from "./EventSubheader";
-import { registerInternEventService } from "../../services/eventsService";
+import { getEventsInformations, registerInternEventService } from "../../services/eventsService";
 import { useUserStore } from "../../store/store";
 import { InternsInformation } from "../../models/internsInterface";
 import { getInternData, getInternInformation } from "../../services/internService";
@@ -50,7 +50,8 @@ const EventCard = ({ event }: EventCardProps) => {
   const [internInfomation, setInternInfomation] = useState<InternsInformation> ();
   const [internEventInfomation, setInternEventInfomation] = useState<InternsInformation> ();
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [responsible, setResponsible] = useState<String>("Ninguno")
+  const [responsible, setResponsible] = useState<String>("Ninguno");
+  const [isRegister, setisRegister] = useState(false);
   const [alert, setAlert] = useState<{
     severity: "success" | "error";
     message: string;
@@ -68,13 +69,14 @@ const EventCard = ({ event }: EventCardProps) => {
     end_date: end_date,
     duration_hours: duration_hours,
     location: location,
+    is_finished: is_finished,
     max_interns: max_interns,
     min_interns: min_interns,
     responsible_intern_id: responsible_intern_id,
     registration_deadline: registration_deadline,
   } = event;
 
-  const isRegistrationClosed = dayjs().isAfter(dayjs(registration_deadline));
+  const isRegistrationClosed = dayjs().isAfter(dayjs(registration_deadline)) || is_finished;
 
   const fetchIntern = async () => {
     try {
@@ -105,6 +107,22 @@ const EventCard = ({ event }: EventCardProps) => {
       console.error("Error fetching Intern:", error);
     } 
   }
+  const fetchInternEventInformation = async () => {
+    try {
+      if(id_event && internInfomation){
+        const res = await getEventsInformations(id_event,internInfomation.id_intern);
+        if(res.data){
+          setisRegister(true)
+        }
+        else{
+          setisRegister(dayjs().isAfter(dayjs(registration_deadline)) || is_finished )
+        }
+        
+      }
+    } catch (error) {
+      console.error("Error fetching Intern:", error);
+    } 
+  }
 
   useEffect(()=>{
     fetchIntern();
@@ -120,6 +138,10 @@ const EventCard = ({ event }: EventCardProps) => {
   useEffect(()=>{
     fetchInternEvent();
   },[event]);
+
+  useEffect(()=>{
+    fetchInternEventInformation();
+  },[internInfomation]);
 
   dayjs.locale("es");
 
@@ -205,12 +227,12 @@ const EventCard = ({ event }: EventCardProps) => {
         )}
       </CardContent>
       <CardActions disableSpacing>
-        <Tooltip title={isRegistrationClosed ? "Registro cerrado" : "Registrarse"}>
+        <Tooltip title={isRegister ? "Registro cerrado" : "Registrarse"}>
           <span>
             <IconButton
               aria-label="registrarse"
               onClick={handleDialogOpen}
-              disabled={isRegistrationClosed}
+              disabled={isRegister}
             >
               <AddIcon />
             </IconButton>
