@@ -46,7 +46,7 @@ const EventTable = () => {
       align: "center",
       flex: 1,
       valueGetter: (params: any) =>
-      dayjs(params.start_date).format("DD/MM/YYYY"),
+        dayjs(params.start_date).format("DD/MM/YYYY"),
       renderHeader: (params) => (
         <Tooltip title="Fecha Inicio" placement="bottom">
           <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
@@ -109,10 +109,9 @@ const EventTable = () => {
       flex: 1,
       renderCell: (params) => (
         <div>
-          <Tooltip title="Ver detalles" placement="bottom">
+          <Tooltip title="Ver detalles">
             <IconButton
               color="primary"
-              aria-label="ver"
               onClick={() => handleView(params.row.id)}
             >
               <VisibilityIcon />
@@ -202,48 +201,48 @@ const EventTable = () => {
     >
       <div style={{ width: "100%", overflowX: "auto" }}>
         <div style={{ minWidth: "800px" }}>
-        <DataGrid
-          rows={events || []}
-          columns={columns}
-          getRowId={(row) => row.id}
-          autoHeight
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          classes={{
-            root: "bg-white dark:bg-gray-800",
-            columnHeader: "bg-gray-200 dark:bg-gray-800 ",
-            cell: "bg-white dark:bg-gray-800",
-            row: "bg-white dark:bg-gray-800",
-            columnHeaderTitle: "!font-bold text-center",
-          }}
-          pageSizeOptions={[5, 10]}
-        />
-        <ConfirmDialog
-          open={open}
-          onClose={handleClose}
-          onConfirm={handleDelete}
-          title="Confirmar eliminación"
-          description="¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer."
-        />
-        {alert && (
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={6000}
-            onClose={handleSnackbarClose}
-          >
-            <Alert
+          <DataGrid
+            rows={events || []}
+            columns={columns}
+            getRowId={(row) => row.id}
+            autoHeight
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            classes={{
+              root: "bg-white dark:bg-gray-800",
+              columnHeader: "bg-gray-200 dark:bg-gray-800 ",
+              cell: "bg-white dark:bg-gray-800",
+              row: "bg-white dark:bg-gray-800",
+              columnHeaderTitle: "!font-bold text-center",
+            }}
+            pageSizeOptions={[5, 10]}
+          />
+          <ConfirmDialog
+            open={open}
+            onClose={handleClose}
+            onConfirm={handleDelete}
+            title="Confirmar eliminación"
+            description="¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer."
+          />
+          {alert && (
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
               onClose={handleSnackbarClose}
-              severity={alert.severity}
-              sx={{ width: "100%" }}
             >
-              {alert.message}
-            </Alert>
-          </Snackbar>
-        )}
-      </div>
+              <Alert
+                onClose={handleSnackbarClose}
+                severity={alert.severity}
+                sx={{ width: "100%" }}
+              >
+                {alert.message}
+              </Alert>
+            </Snackbar>
+          )}
+        </div>
       </div>
     </ContainerPage>
   );
