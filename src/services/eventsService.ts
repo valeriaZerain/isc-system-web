@@ -1,6 +1,8 @@
 import axios from "axios";
 import apiClient from "./apiInstance";
 import { Event, EventInterns } from "../models/eventInterface";
+import { getAllCompleteInternService } from "./internService";
+import { CompleteIntern, EventPerIntern } from "../models/internsInterface";
 
 export const getEventsService = async () => {
   try {
@@ -36,9 +38,14 @@ export const getEventsInformationsService = async () => {
   }
 };
 
-export const getEventsInformations = async (id_event: number, id_becario:number) => {
+export const getEventsInformations = async (
+  id_event: number,
+  id_becario: number
+) => {
   try {
-    const response = await apiClient.get(`/events/${id_event}/status/${id_becario}`);
+    const response = await apiClient.get(
+      `/events/${id_event}/status/${id_becario}`
+    );
     if (response.status === 200) {
       return response.data;
     } else {
@@ -52,7 +59,6 @@ export const getEventsInformations = async (id_event: number, id_becario:number)
     }
   }
 };
-
 
 export const registerInternEventService = async (
   id_event: number,
@@ -197,6 +203,34 @@ export const finishEventService = async (eventId: number) => {
       return response.data;
     } else {
       return { error: "Failed to finish event" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
+
+export const getSupervisorEventByIdService = async (id_user: number) => {
+  try {
+    const everyIntern = await getAllCompleteInternService();
+    // TODO: show all intern events
+    const intern: CompleteIntern = everyIntern.data.find(
+      (intern: CompleteIntern) => intern.user_profile_id === id_user
+    );
+    const supervisedEvent = intern.events?.find((event) => event.is_supervisor);
+    if (!supervisedEvent) {
+      return { error: "No supervised events" };
+    }
+    const response = await getFullEventInformationService(
+      supervisedEvent?.event_id.toString()
+    );
+    if (response.code === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to fetch supervised event" };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
