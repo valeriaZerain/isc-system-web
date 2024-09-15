@@ -86,3 +86,20 @@ export const getInternInformation = async (user_id: number) => {
     }
   }
 };
+
+export const getAllCompleteInternService = async () => {
+  try {
+    const response = await apiClient.get(`/interns/full-info`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to get full interns info " };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+}

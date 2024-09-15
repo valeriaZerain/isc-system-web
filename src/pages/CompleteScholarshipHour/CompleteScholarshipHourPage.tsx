@@ -1,8 +1,6 @@
 import { Grid } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Event } from "../../models/eventInterface";
-import IconButton from "@mui/material/IconButton";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CompleteScholarshipHourEventCard from "../../components/cards/CompleteScholarshipHourEventCard";
 import { getEventsService } from "../../services/eventsService";
 

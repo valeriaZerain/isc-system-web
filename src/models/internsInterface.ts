@@ -1,4 +1,5 @@
 import { Dayjs } from "dayjs";
+import { Event, FullEvent } from "./eventInterface";
 
 export interface Interns {
   id: number;
@@ -24,4 +25,23 @@ export interface InternsInformation extends Interns {
   worked_hours: number;
   registration_date: Dayjs;
   last_update: Dayjs;
+}
+
+export interface CompleteIntern extends Interns {
+  name: string;
+  lastname: string;
+  mothername: string;
+  full_name: string;
+  code: number;
+  events?: EventPerIntern[];
+}
+
+interface EventPerIntern extends Event {
+  is_supervisor: boolean;
+  worked_hours: number;
+  type: string;
+  attendance: boolean;
+  registration_date: string;
+  last_update: string;
+  notes: string;
 }

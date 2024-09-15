@@ -69,7 +69,6 @@ const UpdateEventForm = () => {
     const fetchInterns = async () => {
       try {
         const response = await getInternList(); 
-        console.log(response)
         setInterns(response.data); 
       } catch (error) {
         console.error("Error al cargar becarios", error);
