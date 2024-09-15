@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -56,9 +56,6 @@ const EventCard = ({ event }: EventCardProps) => {
     severity: "success" | "error";
     message: string;
   } | null>(null);
-
-  const [isOverflowing, setIsOverflowing] = useState(false);
-  const descriptionRef = useRef<HTMLDivElement>(null);
   
   const user = useUserStore((state) => state.user);
   const {
@@ -84,16 +81,6 @@ const EventCard = ({ event }: EventCardProps) => {
       console.error("Error fetching Intern:", error);
     } 
   };
-
-  useEffect(() => {
-    if (descriptionRef.current) {
-      const lineHeight = parseFloat(getComputedStyle(descriptionRef.current).lineHeight);
-      const height = descriptionRef.current.clientHeight;
-      const maxHeight = lineHeight * 2;
-
-      setIsOverflowing(height > maxHeight);
-    }
-  }, [description]);
 
   const fetchInternEvent = async () => {
     try {
@@ -212,8 +199,8 @@ const EventCard = ({ event }: EventCardProps) => {
           }}
         >
           {description}
-      </Typography>
-        {!showFullDescription && description && description.length > 0 && isOverflowing && (
+          </Typography>
+        {!showFullDescription && description && description.length > 0 && (
           <Typography
             fontSize={16}
             color="primary"
