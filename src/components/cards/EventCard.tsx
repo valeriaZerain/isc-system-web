@@ -76,8 +76,6 @@ const EventCard = ({ event }: EventCardProps) => {
     registration_deadline: registration_deadline,
   } = event;
 
-  const isRegistrationClosed = dayjs().isAfter(dayjs(registration_deadline)) || is_finished;
-
   const fetchIntern = async () => {
     try {
       const res = await getInternInformation(user!.id);
