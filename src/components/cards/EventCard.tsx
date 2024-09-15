@@ -147,6 +147,7 @@ const EventCard = ({ event }: EventCardProps) => {
     const {id_intern} = internInfomation || {};
     const res = await registerInternEventService(id_event, id_intern);
     if (res.success) {
+      setisRegister(true)
       setAlert({
         severity: "success",
         message: `¡Te has registrado con éxito en el evento ${title}!`,
