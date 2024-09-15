@@ -36,7 +36,8 @@ export interface CompleteIntern extends Interns {
   events?: EventPerIntern[];
 }
 
-interface EventPerIntern extends Event {
+export interface EventPerIntern extends Event {
+  event_id: number;
   is_supervisor: boolean;
   worked_hours: number;
   type: string;
