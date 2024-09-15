@@ -137,7 +137,7 @@ const CreateForm = () => {
       setLoading(true);
       try {
         const formatWithTimezone = (date: string) =>
-          dayjs(date).tz("America/Caracas").format();
+          dayjs(date).tz("America/Caracas").set('hour', 23).set('minute', 59).set('second', 59).format();
 
         const valuesWithTimezone = {
           ...formik.values,
