@@ -164,6 +164,7 @@ const InternsListPage = () => {
             padding: "2px 8px",
             "& .MuiSelect-select": {
               padding: 0,
+              fontSize: "0.875rem",
             },
             "& .MuiInputBase-root": {
               margin: 0,
@@ -200,10 +201,12 @@ const InternsListPage = () => {
         style={{
           position: "absolute",
           top: "17px",
-          right: "17px",
+          right: "30px",
           zIndex: 1,
           backgroundColor: "#005b8f",
           color: "#fff",
+          marginBottom: "25px",
+          marginRight: "20px",
         }}
       >
         Agregar Estudiante
@@ -212,7 +215,8 @@ const InternsListPage = () => {
         <EventDetailsPage
           event={event}
           children={
-            <div style={{ marginTop: "60px", height: 400, width: "100%" }}>
+            <div style={{ width: "100%", overflowX: "auto" }}>
+              <div style={{ minWidth: "800px" }}>
               <DataGrid
                 rows={students}
                 columns={columns}
@@ -299,6 +303,7 @@ const InternsListPage = () => {
                   </Button>
                 </DialogActions>
               </Dialog>
+            </div>
             </div>
           }
         />
