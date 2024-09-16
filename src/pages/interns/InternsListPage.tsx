@@ -206,6 +206,7 @@ const InternsListPage = () => {
           color: "#fff",
           marginBottom: "25px",
           marginRight: "20px",
+          marginLeft: "40px",
         }}
       >
         Agregar Estudiante
@@ -216,100 +217,100 @@ const InternsListPage = () => {
           children={
             <div style={{ width: "100%", overflowX: "auto" }}>
               <div style={{ minWidth: "800px" }}>
-              <DataGrid
-                rows={students}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: { page: 0, pageSize: 5 },
-                  },
-                }}
-                pageSizeOptions={[5, 10]}
-                classes={{
-                  root: "bg-white dark:bg-gray-800",
-                  columnHeader: "bg-gray-200 dark:bg-gray-800",
-                  cell: "bg-white dark:bg-gray-800",
-                  row: "bg-white dark:bg-gray-800",
-                  columnHeaderTitle: "!font-bold text-center",
-                }}
-              />
-              <Dialog
-                open={addStudentOpen}
-                onClose={handleAddStudentClose}
-                aria-labelledby="add-student-dialog-title"
-                maxWidth="sm"
-                fullWidth
-              >
-                <DialogTitle id="add-student-dialog-title">
-                  Agregar Nuevo Becario
-                  <IconButton
-                    aria-label="close"
-                    onClick={handleAddStudentClose}
-                    style={{
-                      color: "#231F74",
-                      position: "absolute",
-                      right: 13,
-                      top: 11,
-                    }}
-                  >
-                    <CancelIcon />
-                  </IconButton>
-                  <Typography
-                    variant="subtitle2"
-                    color="textSecondary"
-                    style={{ marginTop: "8px" }}
-                  >
-                    Selecciona los becarios para agregar
-                  </Typography>
-                </DialogTitle>
-                <DialogContent>
-                  {availableStudents.length > 0 ? (
-                    availableStudents.map((student) => (
-                      <MenuItem
-                        key={student.id}
-                        onClick={() => handleSelectStudent(student.id)}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Typography>{student.name}</Typography>
-                        <Checkbox
-                          checked={selectedStudents.includes(student.id)}
-                          color="primary"
-                        />
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <Typography>
-                      No hay becarios disponibles para agregar.
-                    </Typography>
-                  )}
-                </DialogContent>
-                <DialogActions
-                  style={{ marginRight: "15px", marginTop: "-1%" }}
+                <DataGrid
+                  rows={students}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10]}
+                  classes={{
+                    root: "bg-white dark:bg-gray-800",
+                    columnHeader: "bg-gray-200 dark:bg-gray-800",
+                    cell: "bg-white dark:bg-gray-800",
+                    row: "bg-white dark:bg-gray-800",
+                    columnHeaderTitle: "!font-bold text-center",
+                  }}
+                />
+                <Dialog
+                  open={addStudentOpen}
+                  onClose={handleAddStudentClose}
+                  aria-labelledby="add-student-dialog-title"
+                  maxWidth="sm"
+                  fullWidth
                 >
-                  <Button
-                    onClick={handleAddStudentClose}
-                    style={{
-                      backgroundColor: "#231F74",
-                      color: "#fff",
-                    }}
+                  <DialogTitle id="add-student-dialog-title">
+                    Agregar Nuevo Becario
+                    <IconButton
+                      aria-label="close"
+                      onClick={handleAddStudentClose}
+                      style={{
+                        color: "#231F74",
+                        position: "absolute",
+                        right: 13,
+                        top: 11,
+                      }}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+                    <Typography
+                      variant="subtitle2"
+                      color="textSecondary"
+                      style={{ marginTop: "8px" }}
+                    >
+                      Selecciona los becarios para agregar
+                    </Typography>
+                  </DialogTitle>
+                  <DialogContent>
+                    {availableStudents.length > 0 ? (
+                      availableStudents.map((student) => (
+                        <MenuItem
+                          key={student.id}
+                          onClick={() => handleSelectStudent(student.id)}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography>{student.name}</Typography>
+                          <Checkbox
+                            checked={selectedStudents.includes(student.id)}
+                            color="primary"
+                          />
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <Typography>
+                        No hay becarios disponibles para agregar.
+                      </Typography>
+                    )}
+                  </DialogContent>
+                  <DialogActions
+                    style={{ marginRight: "15px", marginTop: "-1%" }}
                   >
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleAddStudents}
-                    style={{
-                      backgroundColor: "#d32f2f",
-                      color: "#fff",
-                    }}
-                  >
-                    Agregar
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </div>
+                    <Button
+                      onClick={handleAddStudentClose}
+                      style={{
+                        backgroundColor: "#231F74",
+                        color: "#fff",
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleAddStudents}
+                      style={{
+                        backgroundColor: "#d32f2f",
+                        color: "#fff",
+                      }}
+                    >
+                      Agregar
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </div>
             </div>
           }
         />
