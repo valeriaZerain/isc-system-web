@@ -3,7 +3,10 @@ import { useState, useEffect } from "react";
 import GraphicHours from "./GraphicHours";
 import HoursCard from "../../components/common/HoursCard";
 import { Interns } from "../../models/internsInterface";
-import { getInternService } from "../../services/internService";
+import {
+  getInternByUserIdService,
+  getInternService,
+} from "../../services/internService";
 import { useUserStore } from "../../store/store";
 import SimpleHoursCard from "../../components/common/SimpleHoursCard";
 
@@ -11,7 +14,7 @@ function HoursPage() {
   const [intern, setIntern] = useState<Interns>();
   const user = useUserStore((state) => state.user);
   const fetchIntern = async () => {
-    const res = await getInternService(user!.id);
+    const res = await getInternByUserIdService(user!.id);
     if (res.success) {
       setIntern(res.data);
     }
@@ -27,13 +30,13 @@ function HoursPage() {
         <Grid item xs={22} md={4}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-                <SimpleHoursCard
+              <SimpleHoursCard
                 backgroundColor="#f3a43f"
                 textColor="#FFFFFF"
                 title="Total de Horas Requeridas"
                 subtitle="SEMESTRE II   2024"
                 count={intern?.total_hours || 0}
-                />
+              />
             </Grid>
             <Grid item xs={12}>
               <HoursCard
