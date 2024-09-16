@@ -10,6 +10,7 @@ import Grow from "@mui/material/Grow";
 import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
 import { getInternEvents } from "../../services/internService";
 import { EventInternsType } from "../../models/eventInterface";
 
@@ -18,6 +19,7 @@ dayjs.locale("es");
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
 const statusTranslation = (status: string) => {
   const statusMap: Record<string, string> = {
     accepted: "Aceptado",
@@ -53,7 +55,8 @@ const SplitButton = ({
 }) => {
   const [open, setOpen] = useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  
+  const [selectedIndex, setSelectedIndex] = useState(1);
 
   const handleClick = () => {
     options[selectedIndex].onClick();
@@ -91,16 +94,25 @@ const SplitButton = ({
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>
+      
       <Popper
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
         disablePortal
+        style={{ zIndex: 1300 }} 
       >
         {({ TransitionProps }) => (
           <Grow {...TransitionProps} style={{ transformOrigin: "center top" }}>
-            <div>
+            <Paper
+              style={{
+                backgroundColor: "#fff",
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", 
+                borderRadius: "4px",
+                zIndex: 1500,
+              }}
+            >
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList autoFocusItem>
                   {options.map((option, index) => (
@@ -114,7 +126,7 @@ const SplitButton = ({
                   ))}
                 </MenuList>
               </ClickAwayListener>
-            </div>
+            </Paper>
           </Grow>
         )}
       </Popper>
@@ -123,8 +135,9 @@ const SplitButton = ({
 };
 
 const EventHistory = () => {
-  const [historyEvents, setHistoryEvents] = useState<EventInternsType[]>();
-  const [selectedSemester, setSelectedSemester] = useState<number | null>(null);
+  const [historyEvents, setHistoryEvents] = useState<EventInternsType[]>([]);
+  const [selectedSemester, setSelectedSemester] = useState<number>(1);
+
   const fetchEvents = async () => {
     const res = await getInternEvents(1);
     if (res.success) {
@@ -135,6 +148,12 @@ const EventHistory = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  useEffect(() => {
+    if (selectedSemester !== null) {
+      fetchEvents();
+    }
+  }, [selectedSemester]);
 
   const filteredEvents = (semester: number) =>
     historyEvents?.filter((event) =>
@@ -150,13 +169,13 @@ const EventHistory = () => {
     <div style={{ position: "relative" }}>
       <SplitButton
         options={[
-          { label: "Primer Semestre", onClick: () => setSelectedSemester(0) },
-          { label: "Segundo Semestre", onClick: () => setSelectedSemester(1) },
+          { label: "Semestre I - 2024", onClick: () => setSelectedSemester(0) },
+          { label: "Semestre II - 2024", onClick: () => setSelectedSemester(1) },
         ]}
       />
 
-      {selectedSemester !== null &&
-        Object.entries(groupedEvents(selectedSemester)).map(
+      {historyEvents && selectedSemester !== null &&
+        Object.entries(groupedEvents(selectedSemester) || {}).map(
           ([month, events]) => (
             <div key={month} style={{ marginBottom: "20px" }}>
               <Typography variant="h6" style={{ color: "blue" }}>
