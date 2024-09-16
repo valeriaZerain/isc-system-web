@@ -20,7 +20,7 @@ import { getAllCompleteInternService } from "../../services/internService";
 import { useUserStore } from "../../store/store";
 import { Event, FullEvent } from "../../models/eventInterface";
 interface StudentRow {
-  id: number;
+  id_intern: number;
   name: string;
   lastname: string;
   mothername: string;
@@ -52,22 +52,24 @@ const ViewInternSupervisor = () => {
   }, []);
 
   const handleCheckboxChange = (id: number, checked: boolean) => {
-    const updatedStudents = students.map((student) =>
-      student.id === id ? { ...student, assistance: checked } : student
-    );
+    const updatedStudents = students.map((student) => {
+      return student.id_intern === id
+        ? { ...student, attendance: checked }
+        : student;
+    });
     setStudents(updatedStudents);
   };
 
   const handleObservationChange = (id: number, value: string) => {
     const updatedStudents = students.map((student) =>
-      student.id === id ? { ...student, observations: value } : student
+      student.id_intern === id ? { ...student, notes: value } : student
     );
     setStudents(updatedStudents);
   };
 
   const handleExportToExcel = () => {
     const worksheetData = students.map((student) => ({
-      Nombre: student.name,
+      Nombre: `${student.name} ${student.lastname} ${student.mothername}`,
       Código: student.code,
       Observaciones: student.notes,
       Asistencia: student.attendance ? "Sí" : "No",
@@ -96,14 +98,17 @@ const ViewInternSupervisor = () => {
               {students.map((student) => {
                 const fullName = `${student.name} ${student.lastname} ${student.mothername}`;
                 return (
-                  <TableRow key={student.id}>
+                  <TableRow key={student.id_intern}>
                     <TableCell>{fullName}</TableCell>
                     <TableCell>{student.code}</TableCell>
                     <TableCell>
                       <TextField
                         value={student.notes}
                         onChange={(e) =>
-                          handleObservationChange(student.id, e.target.value)
+                          handleObservationChange(
+                            student.id_intern,
+                            e.target.value
+                          )
                         }
                         fullWidth
                       />
@@ -112,7 +117,10 @@ const ViewInternSupervisor = () => {
                       <Checkbox
                         checked={student.attendance}
                         onChange={(e) =>
-                          handleCheckboxChange(student.id, e.target.checked)
+                          handleCheckboxChange(
+                            student.id_intern,
+                            e.target.checked
+                          )
                         }
                       />
                     </TableCell>
