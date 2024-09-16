@@ -36,36 +36,70 @@ const validationSchema = Yup.object({
   location: Yup.string().required("La ubicación es obligatoria"),
   start_date: Yup.date()
     .required("La fecha de inicio es obligatoria")
-    .min(dayjs().startOf('day').toDate(), "La fecha de inicio debe ser igual o posterior al día actual")
-    .max(dayjs().add(2, 'year').toDate(), "La fecha de inicio no puede ser posterior a dos años desde la fecha actual"),
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de inicio debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de inicio no puede ser posterior a dos años desde la fecha actual"
+    ),
   end_date: Yup.date()
     .required("La fecha de finalización es obligatoria")
-    .min(dayjs().startOf('day').toDate(), "La fecha de finalización debe ser igual o posterior al día actual")
-    .max(dayjs().add(2, 'year').toDate(), "La fecha de finalización no puede ser posterior a dos años desde la fecha actual")
-    .test("is-after-or-same-as-start", "La fecha de finalización debe ser igual o posterior a la fecha de inicio", function (value) {
-      const { start_date } = this.parent;
-      return dayjs(value).isSame(dayjs(start_date), 'day')||  dayjs(value).isAfter(dayjs(start_date), 'day');
-    }),
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de finalización debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de finalización no puede ser posterior a dos años desde la fecha actual"
+    ),
   start_cancellation_date: Yup.date()
-    .required('La fecha de inicio de bajas es obligatoria')
-    .min(dayjs().startOf('day').toDate(), "La fecha de inicio de bajas debe ser igual o posterior al día actual")
-    .max(dayjs().add(2, 'year').toDate(), "La fecha de inicio de bajas no puede ser posterior a dos años desde la fecha actual"),
+    .required("La fecha de inicio de bajas es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de inicio de bajas debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de inicio de bajas no puede ser posterior a dos años desde la fecha actual"
+    ),
   end_cancellation_date: Yup.date()
-    .required('La fecha de fin de bajas es obligatoria')
-    .min(dayjs().startOf('day').toDate(), "La fecha de fin de bajas debe ser igual o posterior al día actual")
-    .max(dayjs().add(2, 'year').toDate(), "La fecha de fin de bajas no puede ser posterior a dos años desde la fecha actual")
-    .test("is-before-start", "La fecha límite debe ser anterior a la fecha de inicio", function (value) {
-      const { start_date } = this.parent;
-      return dayjs(value).isBefore(dayjs(start_date));
-    }),
+    .required("La fecha de fin de bajas es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de fin de bajas debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de fin de bajas no puede ser posterior a dos años desde la fecha actual"
+    )
+    .test(
+      "is-before-start",
+      "La fecha límite debe ser anterior a la fecha de inicio",
+      function (value) {
+        const { start_date } = this.parent;
+        return dayjs(value).isBefore(dayjs(start_date));
+      }
+    ),
   registration_deadline: Yup.date()
     .required("La fecha límite de inscripción es obligatoria")
-    .min(dayjs().startOf('day').toDate(), "La fecha límite de inscripción debe ser igual o posterior al día actual")
-    .max(dayjs().add(2, 'year').toDate(), "La fecha límite de inscripción no puede ser posterior a dos años desde la fecha actual")
-    .test("is-before-start", "La fecha límite debe ser anterior a la fecha de inicio", function (value) {
-      const { start_date } = this.parent;
-      return dayjs(value).isBefore(dayjs(start_date));
-    }),
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha límite de inscripción debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha límite de inscripción no puede ser posterior a dos años desde la fecha actual"
+    )
+    .test(
+      "is-before-start",
+      "La fecha límite debe ser anterior a la fecha de inicio",
+      function (value) {
+        const { start_date } = this.parent;
+        return dayjs(value).isBefore(dayjs(start_date));
+      }
+    ),
   duration_hours: Yup.number()
     .required("La duración es obligatoria")
     .min(1, "La duración mínima es de 1 hora"),
@@ -89,7 +123,7 @@ const CreateForm = () => {
   const [message, setMessage] = useState("");
   const [successDialog, setSuccessDialog] = useState(false);
   const [errorDialog, setErrorDialog] = useState(false);
-  const [interns, setInterns] = useState<InternsInformation[]>([]); 
+  const [interns, setInterns] = useState<InternsInformation[]>([]);
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
@@ -97,8 +131,8 @@ const CreateForm = () => {
   useEffect(() => {
     const fetchInterns = async () => {
       try {
-        const response = await getInternList(); 
-        setInterns(response.data); 
+        const response = await getInternList();
+        setInterns(response.data);
       } catch (error) {
         console.error("Error al cargar becarios", error);
       }
@@ -139,14 +173,19 @@ const CreateForm = () => {
       registration_deadline: "",
       start_cancellation_date: "",
       end_cancellation_date: "",
-      responsible_intern_id: -1
+      responsible_intern_id: -1,
     },
     validationSchema,
     onSubmit: async () => {
       setLoading(true);
       try {
         const formatWithTimezone = (date: string) =>
-          dayjs(date).tz("America/Caracas").set('hour', 23).set('minute', 59).set('second', 59).format();
+          dayjs(date)
+            .tz("America/Caracas")
+            .set("hour", 23)
+            .set("minute", 59)
+            .set("second", 59)
+            .format();
 
         const valuesWithTimezone = {
           ...formik.values,
@@ -164,10 +203,11 @@ const CreateForm = () => {
         };
 
         const { responsible_intern_id, ...eventData } = valuesWithTimezone;
-        const finalEventData = responsible_intern_id === -1
-        ? eventData
-        : { ...eventData, responsible_intern_id };
-        const res = await createEventService(finalEventData);
+        const finalEventData =
+          responsible_intern_id === -1
+            ? eventData
+            : { ...eventData, responsible_intern_id };
+        await createEventService(finalEventData);
         formik.resetForm();
         navigate("/programDirector");
         setMessage("Evento creado con éxito");
@@ -511,48 +551,61 @@ const CreateForm = () => {
                   </Grid>
                 </Grid>
               </Grid>
-            <Divider flexItem sx={{ mt: 2, mb: 2 }} />
+              <Divider flexItem sx={{ mt: 2, mb: 2 }} />
             </Grid>
-            <Grid container alignItems="center" style={{ marginLeft: '5%' }}>
-              <Grid item xs={4} style={{marginLeft:'-10px'}}>
-                  <Typography variant="h6" style={{ marginTop: '5px' }}>Supervisor</Typography>
-                </Grid>
-                <Grid item xs={7}>
-                      <FormControl fullWidth margin="normal">
-                        <InputLabel></InputLabel>
-                        <Autocomplete
-                          id="responsible_intern_id"
-                          options={interns || []}
-                          getOptionLabel={(option) => `${ option.name + '  ' +option.lastname + ', ' + option.code}`}
-                          value={interns.find (
-                            (intern) =>
-                              intern.id === formik.values.responsible_intern_id) || null}
-                          onChange={(event, newValue) =>
-                            formik.setFieldValue(
-                              "responsible_intern_id",
-                              newValue?.id || ""
-                            )
-                          }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Supervisor"
-                              variant="outlined"
-                              error={
-                                formik.touched.responsible_intern_id &&
-                                Boolean(formik.errors.responsible_intern_id)
-                              }
-                              helperText={
-                                formik.touched.responsible_intern_id &&
-                                formik.errors.responsible_intern_id
-                              }
-                            />
-                          )}
-                        />
-                      </FormControl>
-                    </Grid>
-                </Grid>
-             </Grid>
+            <Grid container alignItems="center" style={{ marginLeft: "5%" }}>
+              <Grid item xs={4} style={{ marginLeft: "-10px" }}>
+                <Typography variant="h6" style={{ marginTop: "5px" }}>
+                  Supervisor
+                </Typography>
+              </Grid>
+              <Grid item xs={7}>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel></InputLabel>
+                  <Autocomplete
+                    id="responsible_intern_id"
+                    options={interns || []}
+                    getOptionLabel={(option) =>
+                      `${
+                        option.code +
+                        "  " +
+                        option.name +
+                        "  " +
+                        option.lastname
+                      }`
+                    }
+                    value={
+                      interns.find(
+                        (intern) =>
+                          intern.id === formik.values.responsible_intern_id
+                      ) || null
+                    }
+                    onChange={(_, newValue) =>
+                      formik.setFieldValue(
+                        "responsible_intern_id",
+                        newValue?.id || ""
+                      )
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Supervisor"
+                        variant="outlined"
+                        error={
+                          formik.touched.responsible_intern_id &&
+                          Boolean(formik.errors.responsible_intern_id)
+                        }
+                        helperText={
+                          formik.touched.responsible_intern_id &&
+                          formik.errors.responsible_intern_id
+                        }
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
           <Grid
             container
             spacing={2}

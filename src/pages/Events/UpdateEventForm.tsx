@@ -26,9 +26,8 @@ import {
   getFullEventInformationService,
   updateEventService,
 } from "../../services/eventsService";
-import { Interns } from "../../models/internsInterface.ts";
+import { InternsInformation } from "../../models/internsInterface.ts";
 import { getInternList } from "../../services/internService.ts";
-
 
 const validationSchema = Yup.object({
   title: Yup.string().required("El nombre del evento es obligatorio"),
@@ -60,7 +59,7 @@ const UpdateEventForm = () => {
   const [message, setMessage] = useState("");
   const [successDialog, setSuccessDialog] = useState(false);
   const [errorDialog, setErrorDialog] = useState(false);
-  const [interns, setInterns] = useState<Interns[]>([]); 
+  const [interns, setInterns] = useState<InternsInformation[]>([]);
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
@@ -68,8 +67,8 @@ const UpdateEventForm = () => {
   useEffect(() => {
     const fetchInterns = async () => {
       try {
-        const response = await getInternList(); 
-        setInterns(response.data); 
+        const response = await getInternList();
+        setInterns(response.data);
       } catch (error) {
         console.error("Error al cargar becarios", error);
       }
@@ -134,10 +133,7 @@ const UpdateEventForm = () => {
         ),
       };
       if (id_event) {
-        const res = await updateEventService(
-          parseInt(id_event),
-          valuesWithTimezone
-        );
+        await updateEventService(parseInt(id_event), valuesWithTimezone);
       }
       formik.resetForm();
       setMessage("Evento actualizado con éxito");
@@ -155,6 +151,7 @@ const UpdateEventForm = () => {
   const formik = useFormik<Event>({
     initialValues: {
       title: event?.title || "",
+      is_finished: false,
       start_date: dayjs(event?.start_date).format("YYYY-MM-DD") || "",
       end_date: dayjs(event?.end_date).format("YYYY-MM-DD") || "",
       duration_hours: event?.duration_hours || 0,
@@ -485,47 +482,59 @@ const UpdateEventForm = () => {
               <Divider flexItem sx={{ mt: 2, mb: 2 }} />
             </Grid>
 
-            <Grid container alignItems="center" style={{ marginLeft: '5%' }}>
-              <Grid item xs={4} style={{marginLeft:'-10px'}}>
-                  <Typography variant="h6" style={{ marginTop: '5px' }}>Supervisor</Typography>
-                </Grid>
-                <Grid item xs={7}>
-                      <FormControl fullWidth margin="normal">
-                        <InputLabel></InputLabel>
-                        <Autocomplete
-                          id="responsible_intern_id"
-                          name="responsible_intern_name"
-                          options={interns || []}
-                          getOptionLabel={(option) => `${option.code + '  ' + option.name + '  ' +option.lastname}`}
-                          value={interns.find (
-                            (intern) =>
-                              intern.id === formik.values.responsible_intern_id) || null}
-                          onChange={(event, newValue) =>
-                            formik.setFieldValue(
-                              "responsible_intern_id",
-                              newValue?.id || ""
-                            )
-                          }
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Supervisor"
-                              variant="outlined"
-                              error={
-                                formik.touched.responsible_intern_id &&
-                                Boolean(formik.errors.responsible_intern_id)
-                              }
-                              helperText={
-                                formik.touched.responsible_intern_id &&
-                                formik.errors.responsible_intern_id
-                              }
-                            />
-                          )}
-                        />
-                      </FormControl>
-                    </Grid>
-                </Grid>
-             </Grid>
+            <Grid container alignItems="center" style={{ marginLeft: "5%" }}>
+              <Grid item xs={4} style={{ marginLeft: "-10px" }}>
+                <Typography variant="h6" style={{ marginTop: "5px" }}>
+                  Supervisor
+                </Typography>
+              </Grid>
+              <Grid item xs={7}>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel></InputLabel>
+                  <Autocomplete
+                    id="responsible_intern_id"
+                    options={interns || []}
+                    getOptionLabel={(option) =>
+                      `${
+                        option.code +
+                        "  " +
+                        option.name +
+                        "  " +
+                        option.lastname
+                      }`
+                    }
+                    value={
+                      interns.find(
+                        (intern) =>
+                          intern.id === formik.values.responsible_intern_id
+                      ) || null
+                    }
+                    onChange={(_, newValue) =>
+                      formik.setFieldValue(
+                        "responsible_intern_id",
+                        newValue?.id || ""
+                      )
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Supervisor"
+                        variant="outlined"
+                        error={
+                          formik.touched.responsible_intern_id &&
+                          Boolean(formik.errors.responsible_intern_id)
+                        }
+                        helperText={
+                          formik.touched.responsible_intern_id &&
+                          formik.errors.responsible_intern_id
+                        }
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
 
           <Grid
             container

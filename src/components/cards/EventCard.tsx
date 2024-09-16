@@ -23,17 +23,23 @@ import "dayjs/locale/es";
 import "../../style.css";
 import { EventCardProps } from "../../models/eventCardProps";
 import EventSubheader from "./EventSubheader";
-import { getEventsInformations, registerInternEventService } from "../../services/eventsService";
+import {
+  getEventsInformations,
+  registerInternEventService,
+} from "../../services/eventsService";
 import { useUserStore } from "../../store/store";
 import { InternsInformation } from "../../models/internsInterface";
-import { getInternData, getInternInformation } from "../../services/internService";
+import {
+  getInternData,
+  getInternInformation,
+} from "../../services/internService";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
+  const { ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
@@ -47,8 +53,10 @@ const EventCard = ({ event }: EventCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [internInfomation, setInternInfomation] = useState<InternsInformation> ();
-  const [internEventInfomation, setInternEventInfomation] = useState<InternsInformation> ();
+  const [internInfomation, setInternInfomation] =
+    useState<InternsInformation>();
+  const [internEventInfomation, setInternEventInfomation] =
+    useState<InternsInformation>();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [responsible, setResponsible] = useState<String>("Ninguno");
   const [isRegister, setisRegister] = useState(false);
@@ -56,7 +64,7 @@ const EventCard = ({ event }: EventCardProps) => {
     severity: "success" | "error";
     message: string;
   } | null>(null);
-  
+
   const user = useUserStore((state) => state.user);
   const {
     id: id_event,
@@ -79,54 +87,58 @@ const EventCard = ({ event }: EventCardProps) => {
       setInternInfomation(res.data);
     } catch (error) {
       console.error("Error fetching Intern:", error);
-    } 
+    }
   };
 
   const fetchInternEvent = async () => {
     try {
-      if(responsible_intern_id){
+      if (responsible_intern_id) {
         const res = await getInternData(responsible_intern_id);
         setInternEventInfomation(res.data);
       }
     } catch (error) {
       console.error("Error fetching Intern:", error);
-    } 
-  }
+    }
+  };
   const fetchInternEventInformation = async () => {
     try {
-      if(id_event && internInfomation){
-        const res = await getEventsInformations(id_event,internInfomation.id_intern);
-        if(res.data){
-          setisRegister(true)
+      if (id_event && internInfomation) {
+        const res = await getEventsInformations(
+          id_event,
+          internInfomation.id_intern
+        );
+        if (res.data) {
+          setisRegister(true);
+        } else {
+          setisRegister(
+            dayjs().isAfter(dayjs(registration_deadline)) || is_finished
+          );
         }
-        else{
-          setisRegister(dayjs().isAfter(dayjs(registration_deadline)) || is_finished )
-        }
-        
       }
     } catch (error) {
       console.error("Error fetching Intern:", error);
-    } 
-  }
-
-  useEffect(()=>{
-    fetchIntern();
-  },[]);
-
-  useEffect(()=>{
-    if(internEventInfomation){
-      setResponsible(internEventInfomation.name + " " + internEventInfomation.lastname)
     }
-    
-  },[internEventInfomation]);
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
+    fetchIntern();
+  }, []);
+
+  useEffect(() => {
+    if (internEventInfomation) {
+      setResponsible(
+        internEventInfomation.name + " " + internEventInfomation.lastname
+      );
+    }
+  }, [internEventInfomation]);
+
+  useEffect(() => {
     fetchInternEvent();
-  },[event]);
+  }, [event]);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchInternEventInformation();
-  },[internInfomation]);
+  }, [internInfomation]);
 
   dayjs.locale("es");
 
@@ -141,13 +153,12 @@ const EventCard = ({ event }: EventCardProps) => {
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
-  
 
   const handleConfirm = async () => {
-    const {id_intern} = internInfomation || {};
-    const res = await registerInternEventService(id_event, id_intern);
+    const res = await registerInternEventService(Number(id_event), user!.id);
+    //FIX: check me
     if (res.success) {
-      setisRegister(true)
+      setisRegister(true);
       setAlert({
         severity: "success",
         message: `¡Te has registrado con éxito en el evento ${title}!`,
@@ -200,7 +211,7 @@ const EventCard = ({ event }: EventCardProps) => {
           }}
         >
           {description}
-          </Typography>
+        </Typography>
         {!showFullDescription && description && description.length > 0 && (
           <Typography
             fontSize={16}
@@ -271,7 +282,7 @@ const EventCard = ({ event }: EventCardProps) => {
       </Collapse>
       <Dialog
         open={dialogOpen}
-        onClose={(event, reason) => {
+        onClose={(reason) => {
           if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
             handleDialogClose();
           }
@@ -294,7 +305,7 @@ const EventCard = ({ event }: EventCardProps) => {
               color: (theme) => theme.palette.grey[500],
             }}
           >
-            <CancelIcon color="primary"/>
+            <CancelIcon color="primary" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -302,7 +313,9 @@ const EventCard = ({ event }: EventCardProps) => {
             ¿Estás seguro de inscribirte al evento "{title}"?
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center", padding: "29px", marginTop:'-10px' }}>
+        <DialogActions
+          sx={{ justifyContent: "center", padding: "29px", marginTop: "-10px" }}
+        >
           <Button
             onClick={handleDialogClose}
             variant="contained"
