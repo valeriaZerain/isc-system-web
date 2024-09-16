@@ -99,7 +99,7 @@ export const menu = [
   {
     key: "viewInterns",
     path: "/eventsByInterns",
-    text: "Becarios",
+    text: "Becario",
     icon: <ViewListIcon color="primary" />,
     roles: [ADMIN, PROGRAM_DIRECTOR],
   },
