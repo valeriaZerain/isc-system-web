@@ -38,6 +38,10 @@ export interface Event {
   updated_at?: string;
 }
 
+export interface EventNameSupervisor extends Event{
+  name_supervisor: string;
+}
+
 export interface EventInformations extends Event {
   accepted_interns: string;
   pending_interns: string;
