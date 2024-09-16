@@ -25,7 +25,7 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
             <PersonIcon color="primary" />
             {event.title}
           </Typography>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
+          <Grid container spacing={-30} sx={{ marginTop: 2 }}>
             <Grid item xs={6}>
               <Typography variant="body1" color="textSecondary">
                 <strong>Fecha Inicial:</strong>{" "}
@@ -42,12 +42,12 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
                 <strong>Ubicación:</strong> {event.location}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Máximo Becarios:</strong> {event.max_interns}
+                <strong>Máx.Becarios:</strong> {event.max_interns}
               </Typography>
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1" color="textSecondary">
-                <strong>Periodo de Inscripciones:</strong>{" "}
+                <strong>Periodo de Inscripción/Baja:</strong>{" "}
                 {dayjs(event.start_cancellation_date).format("DD/MM/YYYY")} -{" "}
                 {dayjs(event.end_cancellation_date).format("DD/MM/YYYY")}
               </Typography>
