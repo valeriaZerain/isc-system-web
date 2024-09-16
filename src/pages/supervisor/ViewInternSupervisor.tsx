@@ -12,13 +12,11 @@ import {
   Button,
   Grid,
 } from "@mui/material";
-import dayjs from "dayjs";
 import * as XLSX from "xlsx";
 import EventDetailsPage from "../../components/common/EventDetailsPage";
 import { getSupervisorEventByIdService } from "../../services/eventsService";
-import { getAllCompleteInternService } from "../../services/internService";
 import { useUserStore } from "../../store/store";
-import { Event, FullEvent } from "../../models/eventInterface";
+import { FullEvent } from "../../models/eventInterface";
 interface StudentRow {
   id_intern: number;
   name: string;

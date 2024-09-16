@@ -1,13 +1,17 @@
-import { IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
+import { IconButton, InputAdornment, OutlinedInput, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import SearchIcon from '@mui/icons-material/Search';
+
 import RoleComponent from "./RoleComponent";
 import { RoleTableProps } from "../../models/roleTablePropsInterface";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 
 const RoleTable: React.FC<RoleTableProps> = ({ roles, onRoleSelect, setIsModalVisible}) => { // TODO: Corregir la función para recibir un parámetro
 
   const [selectedRole, setSelectedRole] = useState("Jefe de Carrera");
+  const [search, setSearch] = useState("")
+  const [filteredRoles, setFilteredRoles] = useState(roles);
 
   const handleRoleClick = (roleName:  string) => {
     setSelectedRole(roleName);
@@ -16,7 +20,28 @@ const RoleTable: React.FC<RoleTableProps> = ({ roles, onRoleSelect, setIsModalVi
 
   const handleRoleDelete = (roleName: string) =>{
     //TODO: Lógica para borrar el componente
+    console.log("Borrando rol: ", roleName);
   }
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    filterRoles(search);
+  };
+
+  const filterRoles = (searchValue: string) => {
+    if (searchValue.trim() === "") {
+      setFilteredRoles(roles);
+    } else {
+      const filtered = roles.filter((role) =>
+        role.roleName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setFilteredRoles(filtered);
+    }
+  }
+
+  useEffect(() => {
+    filterRoles(search);
+  }, [search, roles]);
 
   return (
     <Table className="border-table">
@@ -31,9 +56,10 @@ const RoleTable: React.FC<RoleTableProps> = ({ roles, onRoleSelect, setIsModalVi
             </div>
           </TableCell>
         </TableRow>
+        <OutlinedInput type="text" id="roles-search" placeholder="Buscar rol" onChange={handleSearch} fullWidth sx={{mt: 2, mb: 2}} endAdornment={<InputAdornment position = "end"><SearchIcon/></InputAdornment>}/>
       </TableHead>
-      <TableBody>
-        {roles && roles.map((role, index) => (
+      <TableBody sx={{ display: 'block', maxHeight: 300, overflowY: 'auto' }}>
+        {filteredRoles && filteredRoles.map((role, index) => (
           <TableRow key={index}>
               <RoleComponent role={role} selectedRole={selectedRole} onRoleClick={handleRoleClick} onDelete={handleRoleDelete}/>
           </TableRow>
@@ -43,4 +69,4 @@ const RoleTable: React.FC<RoleTableProps> = ({ roles, onRoleSelect, setIsModalVi
   )
 }
 
-export default RoleTable
+export default RoleTable;

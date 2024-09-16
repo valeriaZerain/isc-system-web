@@ -51,7 +51,6 @@ const Layout = () => {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
   const { clearUser, user } = useUserStore();
-  console.log(user);
   const settings = [
     {
       title: "Perfil",
@@ -70,7 +69,7 @@ const Layout = () => {
   ];
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null,
+    null
   );
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -118,7 +117,7 @@ const Layout = () => {
               color="textSecondary"
               textAlign={"right"}
             >
-              {user?.role}
+              {user?.roles}
             </Typography>
           </Box>
 

@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs";
-import { Event, FullEvent } from "./eventInterface";
+import { Event } from "./eventInterface";
 
 export interface Interns {
   id: number;
