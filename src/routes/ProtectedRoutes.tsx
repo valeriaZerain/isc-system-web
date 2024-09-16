@@ -28,10 +28,11 @@ import MyEventsTable from "../pages/interns/MyEventsTable";
 import "../style.css";
 import UsersPage from "../pages/Users/UsersPage";
 import AdministratorPage from "../pages/Administrator/AdministratorPage";
-import CreateUserPage from "../pages/Users/CreateUserPage";
 import EventHistory from "../components/cards/EventHistory";
 import ViewInternSupervisor from "../pages/supervisor/ViewInternSupervisor";
 import EventsByInternsPage from "../pages/interns/EventsByInterns";
+import { roles } from "../constants/roles";
+import EventRegisterPage from "../pages/Events/EventRegisterPage";
 
 function loader() {
   return getProcess();
@@ -47,7 +48,10 @@ const getStudentProcess: LoaderFunction = async ({
   const studentId = Number(params.id);
   return getStudentById(studentId);
 };
+const { ADMIN, PROFESSOR, STUDENT, INTERN, PROGRAM_DIRECTOR, SUPERVISOR } =
+  roles;
 
+//TODO: check proper roles on routes
 const protectedRoutes = [
   {
     path: "/",
@@ -60,7 +64,9 @@ const protectedRoutes = [
       {
         path: "/dashboard",
         element: (
-          <RoleGuard allowedRoles={["admin", "student", "professor"]}>
+          <RoleGuard
+            allowedRoles={[ADMIN, STUDENT, PROFESSOR, PROGRAM_DIRECTOR]}
+          >
             <DashboardPage />
           </RoleGuard>
         ),
@@ -69,7 +75,7 @@ const protectedRoutes = [
         path: "/process",
         loader: loader,
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <GraduationProcessPage />
           </RoleGuard>
         ),
@@ -77,7 +83,7 @@ const protectedRoutes = [
       {
         path: "/professors",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <ProfessorPage />
           </RoleGuard>
         ),
@@ -86,7 +92,7 @@ const protectedRoutes = [
         path: "/students",
         loader: loader,
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, PROGRAM_DIRECTOR]}>
             <StudentPage />
           </RoleGuard>
         ),
@@ -94,7 +100,7 @@ const protectedRoutes = [
       {
         path: "/edit-student/:id",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <EditStudentPage />
           </RoleGuard>
         ),
@@ -103,7 +109,7 @@ const protectedRoutes = [
         path: "/create-professor",
         loader: loader,
         element: (
-          <RoleGuard allowedRoles={["admin"]}>
+          <RoleGuard allowedRoles={[ADMIN]}>
             <CreateProfessorPage />
           </RoleGuard>
         ),
@@ -112,7 +118,7 @@ const protectedRoutes = [
         path: "/create-student",
         loader: loader,
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <CreateStudentPage />
           </RoleGuard>
         ),
@@ -121,7 +127,7 @@ const protectedRoutes = [
         path: "/studentProfile/:id",
         loader: getStudentProcess,
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <ProcessInfoPage />
           </RoleGuard>
         ),
@@ -130,7 +136,7 @@ const protectedRoutes = [
         path: "/createProcess",
         loader: loader,
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <CreateProcessPage />
           </RoleGuard>
         ),
@@ -138,7 +144,7 @@ const protectedRoutes = [
       {
         path: "/profile",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <Profile />
           </RoleGuard>
         ),
@@ -146,7 +152,16 @@ const protectedRoutes = [
       {
         path: "/profile/:id",
         element: (
-          <RoleGuard allowedRoles={["admin", "student", "professor"]}>
+          <RoleGuard
+            allowedRoles={[
+              ADMIN,
+              STUDENT,
+              PROFESSOR,
+              PROGRAM_DIRECTOR,
+              INTERN,
+              SUPERVISOR,
+            ]}
+          >
             <Profile />
           </RoleGuard>
         ),
@@ -154,7 +169,7 @@ const protectedRoutes = [
       {
         path: "/events",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <EventsPage />
           </RoleGuard>
         ),
@@ -162,7 +177,7 @@ const protectedRoutes = [
       {
         path: "/events/create",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <CreateEventPage />
           </RoleGuard>
         ),
@@ -170,7 +185,7 @@ const protectedRoutes = [
       {
         path: "/interns/:id_event",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <InternsListPage />
           </RoleGuard>
         ),
@@ -178,7 +193,7 @@ const protectedRoutes = [
       {
         path: "/editEvent/:id_event",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <UpdateEventForm />
           </RoleGuard>
         ),
@@ -186,7 +201,7 @@ const protectedRoutes = [
       {
         path: "/EventHistory/:id_event",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, INTERN, SUPERVISOR]}>
             <EventHistory />
           </RoleGuard>
         ),
@@ -194,7 +209,7 @@ const protectedRoutes = [
       {
         path: "/scholarshipHours",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <HoursPage />
           </RoleGuard>
         ),
@@ -202,7 +217,7 @@ const protectedRoutes = [
       {
         path: "/programDirector",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROGRAM_DIRECTOR]}>
             <EventTable />
           </RoleGuard>
         ),
@@ -210,7 +225,7 @@ const protectedRoutes = [
       {
         path: "/CompleteScholarshipHour",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, PROGRAM_DIRECTOR]}>
             <CompleteScholarshipHourPage />
           </RoleGuard>
         ),
@@ -218,7 +233,7 @@ const protectedRoutes = [
       {
         path: "/eventHistory",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <EventHistory />
           </RoleGuard>
         ),
@@ -226,7 +241,7 @@ const protectedRoutes = [
       {
         path: "/eventsByInterns",
         element: (
-          <RoleGuard allowedRoles={["admin", "professor"]}>
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
             <EventsByInternsPage />
           </RoleGuard>
         ),
@@ -234,32 +249,64 @@ const protectedRoutes = [
       {
         path: "/myEvents",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <MyEventsTable />
           </RoleGuard>
         ),
       },
       {
+        path: "/eventRegisters/:id_event",
+        element: (
+          <RoleGuard allowedRoles={[ADMIN, PROFESSOR, PROGRAM_DIRECTOR]}>
+            <EventRegisterPage />
+          </RoleGuard>
+        ),
+      },
+      {
         path: "/administration",
-        element: <AdministratorPage />,
+        element: (
+          <RoleGuard allowedRoles={["admin"]}>
+            <AdministratorPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "/users",
-        element: <UsersPage />,
+        element: (
+          <RoleGuard allowedRoles={["admin"]}>
+            <UsersPage />
+          </RoleGuard>
+        ),
       },
-      {
-        path: "/create-user",
-        element: <CreateUserPage />,
-      },
-      {
-        path: "/edit-user/:id",
-        element: <CreateUserPage />,
-      },
+      // {
+      //   path: "/create-user",
+      //   element: <CreateUserPage />,
+      // },
+      // {
+      //   path: "/edit-user/:id",
+      //   element: <CreateUserPage />,
+      // },
       {
         path: "/supervisor",
         element: (
-          <RoleGuard allowedRoles={["admin", "student"]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, SUPERVISOR]}>
             <ViewInternSupervisor />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/eventHistory",
+        element: (
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN]}>
+            <EventHistory />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/preInscriptions",
+        element: (
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN]}>
+            <MyEventsTable />
           </RoleGuard>
         ),
       },
