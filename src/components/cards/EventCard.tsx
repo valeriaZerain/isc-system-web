@@ -302,7 +302,7 @@ const EventCard = ({ event }: EventCardProps) => {
             ¿Estás seguro de inscribirte al evento "{title}"?
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "flex-end", padding: "24px" }}>
+        <DialogActions sx={{ justifyContent: "center", padding: "29px", marginTop:'-10px' }}>
           <Button
             onClick={handleDialogClose}
             variant="contained"
