@@ -49,7 +49,7 @@ function SimpleHoursCard({
                                     fontSize: 18,  
                                     color: textColor,
                                     fontWeight: "bold",
-                                    marginTop:'-16px'
+                                    marginTop:'-16px',
                                 }}
                             >
                                 {subtitle}
