@@ -10,7 +10,6 @@ import SimpleHoursCard from "../../components/common/SimpleHoursCard";
 function HoursPage() {
   const [intern, setIntern] = useState<Interns>();
   const user = useUserStore((state) => state.user);
-
   const fetchIntern = async () => {
     const res = await getInternService(user!.id);
     if (res.success) {
