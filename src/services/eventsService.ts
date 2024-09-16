@@ -236,7 +236,7 @@ export const getSupervisorEventByIdService = async (id_user: number) => {
     if (axios.isAxiosError(error)) {
       return { error: error.response?.data.message || "Network error" };
     } else {
-      return { error: "An unexpected error occurred" };
+      return { error: "An unexpected error occurred", err: error };
     }
   }
 };

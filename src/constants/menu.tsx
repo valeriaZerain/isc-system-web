@@ -108,13 +108,13 @@ export const menu = [
     path: "/eventHistory",
     text: "Historial",
     icon: <HistoryIcon color="primary" />,
-    roles: [ADMIN, STUDENT, INTERN],
+    roles: [ADMIN, STUDENT, INTERN, SUPERVISOR],
   },
   {
     key: "preInscriptions",
     path: "/preInscriptions",
     text: "Pre-Inscripciones",
     icon: <InsertInvitationIcon color="primary" />,
-    roles: [ADMIN, STUDENT, INTERN],
+    roles: [ADMIN, STUDENT, INTERN, SUPERVISOR],
   },
 ];
