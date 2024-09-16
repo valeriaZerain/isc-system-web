@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { Container, Grid, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { FullEvent } from "../../models/eventInterface";
-import { InternsInformation } from "../../models/internsInterface";
 import { internRegisterStates } from "../../constants/internRegisterStates";
 import dayjs from "dayjs";
 
