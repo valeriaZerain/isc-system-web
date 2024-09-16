@@ -53,7 +53,11 @@ const validationSchema = Yup.object({
     .max(
       dayjs().add(2, "year").toDate(),
       "La fecha de finalización no puede ser posterior a dos años desde la fecha actual"
-    ),
+    )
+    .test("is-after-or-same-as-start", "La fecha de finalización debe ser igual o posterior a la fecha de inicio", function (value) {
+      const { start_date } = this.parent;
+      return dayjs(value).isSame(dayjs(start_date), 'day')||  dayjs(value).isAfter(dayjs(start_date), 'day');
+    }),
   start_cancellation_date: Yup.date()
     .required("La fecha de inicio de bajas es obligatoria")
     .min(
