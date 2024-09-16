@@ -6,6 +6,7 @@ import HoursCard from "../../components/common/HoursCard";
 import { Interns } from "../../models/internsInterface";
 import { getInternService } from "../../services/internService";
 import { useUserStore } from "../../store/store";
+import SimpleHoursCard from "../../components/common/SimpleHoursCard";
 
 
 
@@ -39,13 +40,12 @@ function HoursPage() {
         <Grid item xs={22} md={4}>
             <Grid container spacing={3}>
             <Grid item xs={12}>
-                <HoursCard
+                <SimpleHoursCard
                 backgroundColor="#f3a43f"
                 textColor="#FFFFFF"
                 title="Total de Horas Requeridas"
-                subtitle=""
+                subtitle="SEMESTRE II  2024"
                 count={intern?.total_hours || 0}
-                percentage={100}
                 />
             </Grid>
             <Grid item xs={12}>
