@@ -10,8 +10,9 @@ import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import EventIcon from "@mui/icons-material/Event";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import HistoryIcon from '@mui/icons-material/History';
-import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
+//FIX: check me
+import HistoryIcon from "@mui/icons-material/History";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 
 import { roles } from "./roles";
 const { ADMIN, PROFESSOR, STUDENT, INTERN, PROGRAM_DIRECTOR, SUPERVISOR } =
@@ -23,21 +24,21 @@ export const menu = [
     path: "/dashboard",
     text: "Dashboard",
     icon: <HomeIcon color="primary" />,
-    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR],
+    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR, STUDENT],
   },
   {
     key: "process",
     path: "/process",
     text: "Procesos",
     icon: <ChecklistOutlinedIcon color="primary" />,
-    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR],
+    roles: [ADMIN, PROFESSOR, PROGRAM_DIRECTOR, STUDENT],
   },
   {
     key: "professors",
     path: "/professors",
     text: "Docentes",
     icon: <SupervisorAccountIcon color="primary" />,
-    roles: [ADMIN],
+    roles: [PROFESSOR, STUDENT],
   },
   {
     key: "students",
@@ -74,7 +75,7 @@ export const menu = [
     icon: <SupervisedUserCircleIcon color="primary" />,
     roles: [ADMIN, SUPERVISOR],
   },
-  { 
+  {
     key: "CompleteScholarship",
     path: "/CompleteScholarshipHour",
     text: "Eventos",
@@ -93,6 +94,7 @@ export const menu = [
     path: "/users",
     text: "Usuarios",
     icon: <SwitchAccountIcon color="primary" />,
+    roles: [ADMIN],
   },
   {
     key: "viewInterns",

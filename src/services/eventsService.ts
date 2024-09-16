@@ -2,7 +2,7 @@ import axios from "axios";
 import apiClient from "./apiInstance";
 import { Event, EventInterns } from "../models/eventInterface";
 import { getAllCompleteInternService } from "./internService";
-import { CompleteIntern, EventPerIntern } from "../models/internsInterface";
+import { CompleteIntern } from "../models/internsInterface";
 
 export const getEventsService = async () => {
   try {

@@ -300,7 +300,7 @@
       "lastname": "Robles",
       "mothername": "Gutierrez",
       "email": "mildret@quya.com",
-      "cellphone": "70182881",
+      "phone": "70182881",
       "roles": [
         "Becario"
       ],
@@ -313,7 +313,7 @@
       "lastname": "Villegas",
       "mothername": "Minerva",
       "email": "hade@hade.com",
-      "cellphone": "79282012",
+      "phone": "79282012",
       "roles": [
         "Estudiante"
       ],
@@ -321,31 +321,58 @@
       "id": 12348
     },
     {
-      "name": "Adrian",
-      "code": "12658",
-      "lastname": "Thompson",
-      "mothername": "Machaca",
-      "email": "thomas@thompson.com",
-      "cellphone": "12312412",
-      "roles": [
-        "Jefe de carrera FACED"
-      ],
-      "degree": "Ing.",
-      "id": 12349
-    },
-    {
       "name": "Jhonny",
       "code": "70416",
       "lastname": "Cabezas",
       "mothername": "Gomez",
       "email": "jhony@jhony.com",
-      "cellphone": "78198108",
+      "phone": "78198108",
       "roles": [
         "Becario",
         "Estudiante"
       ],
       "degree": "",
       "id": 12350
+    },
+    {
+      "name": "Jose",
+      "code": "00001",
+      "lastname": "Gil",
+      "mothername": "Burgoa",
+      "email": "amor@amorcito.com",
+      "phone": "70182881",
+      "roles": [
+        "Docente"
+      ],
+      "degree": "PhD",
+      "id": 12352
+    },
+    {
+      "name": "Suvadra",
+      "code": "59841",
+      "lastname": "Checa",
+      "mothername": "Nanda",
+      "email": "suvi@suvi.com",
+      "phone": "72983018",
+      "roles": [
+        "Estudiante",
+        "Docente"
+      ],
+      "degree": "",
+      "id": 12353
+    },
+    {
+      "name": "Felix",
+      "code": "25872",
+      "lastname": "Halim",
+      "mothername": "Halim",
+      "email": "halim@halim.com",
+      "phone": "77219391",
+      "roles": [
+        "Docente"
+      ],
+      "degree": "PhD",
+      "id": 12354
     }
   ]
 }

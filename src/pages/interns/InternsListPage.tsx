@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
-import CancelIcon from '@mui/icons-material/Cancel';
+import CancelIcon from "@mui/icons-material/Cancel";
 import DialogContent from "@mui/material/DialogContent";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -22,7 +22,6 @@ import {
   updateInternType,
 } from "../../services/eventsService";
 import { internRegisterStates } from "../../constants/internRegisterStates";
-
 
 interface FullEvent extends Event {
   interns: any[];
@@ -213,7 +212,7 @@ const InternsListPage = () => {
       </Button>
       {eventDetails && (
         <EventDetailsPage
-          event={event}
+          event={event!}
           children={
             <div style={{ width: "100%", overflowX: "auto" }}>
               <div style={{ minWidth: "800px" }}>
@@ -244,9 +243,14 @@ const InternsListPage = () => {
                 <DialogTitle id="add-student-dialog-title">
                   Agregar Nuevo Becario
                   <IconButton
-                     aria-label="close"
-                     onClick={handleAddStudentClose}
-                     style={{ color: '#231F74', position:'absolute', right:13, top:11}}  
+                    aria-label="close"
+                    onClick={handleAddStudentClose}
+                    style={{
+                      color: "#231F74",
+                      position: "absolute",
+                      right: 13,
+                      top: 11,
+                    }}
                   >
                     <CancelIcon />
                   </IconButton>
@@ -282,7 +286,9 @@ const InternsListPage = () => {
                     </Typography>
                   )}
                 </DialogContent>
-                <DialogActions style={{ marginRight:'15px', marginTop:'-1%' }}>
+                <DialogActions
+                  style={{ marginRight: "15px", marginTop: "-1%" }}
+                >
                   <Button
                     onClick={handleAddStudentClose}
                     style={{

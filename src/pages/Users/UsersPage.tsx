@@ -12,74 +12,95 @@ import ContainerPage from "../../components/common/ContainerPage";
 import { getRoles } from "../../services/roleService";
 import { Role } from "../../models/roleInterface";
 import { User } from "../../models/userInterface";
+import CreateUserPage from "../../components/users/CreateUserPage";
 
 const UsersPage = () => {
-    const navigate = useNavigate()
-    const [users, setUsers] = useState<User[]>([])
-    const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
-    const [isOpenDelete, setOpenDelete] = useState(false)
-    const [selectedUser, setSelectedUser] = useState<number | null>(null)
-    const [roles, setRoles] = useState([])
-    const [search, setSearch] = useState("");
+  const navigate = useNavigate()
+  const [users, setUsers] = useState<User[]>([])
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
+  const [isOpenDelete, setOpenDelete] = useState(false)
+  const [isOpenCreate, setOpenCreate] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<number | null>(null)
+  const [roles, setRoles] = useState([])
+  const [filterRoles, setFilterRoles] = useState("")
+  const [search, setSearch] = useState("");
+  const [user, setUser] = useState<User | null>(null)
 
     const handleCreateUser = () => {
-      navigate("/create-user");
+      setUser(null)
+      setOpenCreate(true)
     };
 
-    const handleView = (id: number) => {
-        navigate(`/profile/${id}`);
-    };
+  const handleView = (id: number) => {
+    navigate(`/profile/${id}`);
+  };
 
     const handleEdit = (id: number) => {
-        navigate(`/edit-user/${id}`);
+      const editUser = users.find(user => user.id == id) || null
+      setUser(editUser)
+      setOpenCreate(true)
     };
 
-    const handleClickDelete = (id: number) => {
-        setSelectedUser(id)
-        setOpenDelete(true)
+  const handleClickDelete = (id: number) => {
+    setSelectedUser(id)
+    setOpenDelete(true)
+  }
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setSelectedUser(null);
+  };
+
+  const handleDelete = async () => {
+    if (selectedUser !== null) {
+      try {
+        await deleteUser(selectedUser);
+        fetchUsers();
+      } catch (error) {
+        console.log(error);
+      }
+      handleCloseDelete();
+    }
+  }
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const searchValue = e.target.value;
+    setSearch(searchValue);
+};
+
+const handleSelectRoleChange = (event: { target: { value: string } }) => {
+    setFilterRoles(event.target.value);
+};
+
+useEffect(() => {
+    applyFilters();
+}, [search, filterRoles]);
+
+const applyFilters = () => {
+    let filteredData = users;
+
+    if (search) {
+        const lowercasedFilter = search.toLowerCase();
+        filteredData = filteredData.filter((user: User) => {
+            const codeName = `${user.code} ${user.name} ${user.lastname} ${user.mothername}`;
+
+            return (
+                user.name?.toLowerCase().includes(lowercasedFilter) ||
+                user.lastname?.toLowerCase().includes(lowercasedFilter) ||
+                user.code?.toString().includes(lowercasedFilter) ||
+                codeName.toLowerCase().includes(lowercasedFilter)
+            );
+        });
     }
 
-    const handleCloseDelete = () => {
-        setOpenDelete(false);
-        setSelectedUser(null);
-    };
-
-    const handleDelete = async () => {
-        if (selectedUser !== null) {
-            try {
-              await deleteUser(selectedUser);
-              fetchUsers();
-            } catch (error) {
-              console.log(error);
-            } 
-            handleCloseDelete();   
-        }
+    if (filterRoles) {
+        filteredData = filteredData.filter((user: User) => {
+            return user.roles.includes(filterRoles);
+        });
     }
 
-    const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value);
-      filterUsers(search);
-    };
-
-    useEffect(() => {
-      filterUsers(search);
-    }, [search]);
-
-    const filterUsers = (searchValue: string) => {
-    const lowercasedFilter = searchValue.toLowerCase();
-    const filteredData = users.filter((user: User) => {
-      const codeName = `${user.code} ${user.name} ${user.lastname} ${user.mothername}`
-
-      return (
-        user.name?.toLowerCase().includes(lowercasedFilter) ||
-        user.lastname?.toLowerCase().includes(lowercasedFilter) ||
-        user.code?.toString().includes(lowercasedFilter) ||
-        codeName.toLowerCase().includes(lowercasedFilter)
-      );
-    });
     setFilteredUsers(filteredData);
   };
-  
 
     const columns: GridColDef[] = [
         {
@@ -104,7 +125,7 @@ const UsersPage = () => {
             flex: 1,
         },
         {
-            field: "cellphone",
+            field: "phone",
             headerName: "Teléfono", 
             headerAlign: "center",
             align: "center",
@@ -118,7 +139,7 @@ const UsersPage = () => {
             flex: 1,
             renderCell: ({row}) => (
               row.roles.map((rol:string) => (
-                <Chip key={rol} label={rol} style={{color: "#ffffff", backgroundColor: "#337DD0"}}/>
+                <Chip key={rol} label={rol} style={{color: "#ffffff", backgroundColor: "#337DD0"}} />
               ))
             )
         },
@@ -156,28 +177,32 @@ const UsersPage = () => {
         }
     ]
 
-    const fetchUsers = async () => {
-        const usersResponse = await getUsers()
-        for(const user of usersResponse){
-          user.fullName = `${user.name} ${user.lastname} ${user.mothername}`
-        }
-        setUsers(usersResponse)
-        setFilteredUsers(usersResponse)
+  const fetchUsers = async () => {
+    const usersResponse = await getUsers()
+    for (const user of usersResponse) {
+      user.fullName = `${user.name} ${user.lastname} ${user.mothername}`
     }
+    setUsers(usersResponse)
+    setFilteredUsers(usersResponse)
+  }
 
-    const fetchRoles = async () => {
-      const rolesResponse = await getRoles()
-      setRoles(rolesResponse)
+  const fetchRoles = async () => {
+    const rolesResponse = await getRoles()
+    setRoles(rolesResponse)
+  }
+
+  useEffect(() => {
+    fetchUsers()
+    fetchRoles()
+  }, [])
+
+    const countStudentsWithRole = (role: string) => {
+      return users.filter(user => user.roles.includes(role)).length
     }
-
-    useEffect( () => {
-        fetchUsers()
-        fetchRoles()
-    },[])
 
     return (
         <ContainerPage
-          title={"Usuarios"}
+          title={`Usuarios (${users.length})`}
           subtitle={"Lista de usuarios"}
           actions={
             <Button
@@ -219,13 +244,14 @@ const UsersPage = () => {
                       fullWidth
                       label="Rol"
                       style={{height: 40 }}
+                      onChange={handleSelectRoleChange}
                     >
                       {roles.map((rol: Role) => (
-                        <MenuItem value={rol.roleName}>{rol.roleName}</MenuItem>
+                        <MenuItem value={rol.roleName}>{rol.roleName} ({countStudentsWithRole(rol.roleName)})</MenuItem>
                       ))}
                     </Select>
-                    </FormControl>
-                  </Grid>
+                  </FormControl>
+                </Grid>
               </Grid>
               <DataGrid
                 rows={filteredUsers}
@@ -245,23 +271,23 @@ const UsersPage = () => {
                 pageSizeOptions={[5, 10]}
               />
 
-              <Dialog
-                open={isOpenDelete}
-                onClose={handleCloseDelete}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
+          <Dialog
+            open={isOpenDelete}
+            onClose={handleCloseDelete}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
 
-                <DialogTitle id="alert-dialog-title">
-                    Confirmar eliminación
-                </DialogTitle>
-                
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    ¿Estás seguro de que deseas eliminar este usuario? Esta
-                    acción no se puede deshacer.
-                  </DialogContentText>
-                </DialogContent>
+            <DialogTitle id="alert-dialog-title">
+              Confirmar eliminación
+            </DialogTitle>
+
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                ¿Estás seguro de que deseas eliminar este usuario? Esta
+                acción no se puede deshacer.
+              </DialogContentText>
+            </DialogContent>
 
                 <DialogActions>
                   <Button 
@@ -277,6 +303,16 @@ const UsersPage = () => {
                   </Button>
                 </DialogActions>
               </Dialog>
+
+              {isOpenCreate && <CreateUserPage 
+                openCreate={isOpenCreate}
+                handleClose={() => { 
+                  fetchUsers()
+                  setOpenCreate(false)
+                }}
+                user={user}
+              />}
+
             </div>
           }
         />

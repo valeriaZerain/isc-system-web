@@ -1,12 +1,12 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-import { Alert, Button, IconButton, Snackbar } from "@mui/material";
+import { Alert, Button, IconButton, Snackbar, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { Tooltip } from "@mui/material";
+import {} from "@mui/material";
 import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
 import {
@@ -26,6 +26,7 @@ const EventTable = () => {
     severity: "success" | "error";
     message: string;
   } | null>(null);
+  //FIX: check me
 
   const fetchEvents = async () => {
     const res = await getEventsInformationsService();
@@ -45,6 +46,7 @@ const EventTable = () => {
       headerAlign: "center",
       align: "center",
       flex: 1,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       valueGetter: (params: any) =>
         dayjs(params.start_date).format("DD/MM/YYYY"),
       renderHeader: (params) => (
