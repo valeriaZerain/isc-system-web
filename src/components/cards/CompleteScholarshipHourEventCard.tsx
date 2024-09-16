@@ -35,13 +35,13 @@ const CompleteScholarshipHourEventCard: FC<CSHCardProps> = ({ event }) => {
 
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
-  const fetchFullEvent = () => {
+  const fetchFullEvent = async () => {
     if (!id) {
       console.error("Could not event with such id");
       return;
     }
     try {
-      const res = getFullEventInformationService(id.toString());
+      await getFullEventInformationService(id.toString());
     } catch (error) {
       console.error("Could not fetch event", error);
     }
@@ -70,7 +70,7 @@ const CompleteScholarshipHourEventCard: FC<CSHCardProps> = ({ event }) => {
         console.error("Id is undefined");
         return;
       }
-      const res = await finishEventService(id);
+      await finishEventService(id);
     } catch (error) {
       console.error("Error while finishing event");
     }
