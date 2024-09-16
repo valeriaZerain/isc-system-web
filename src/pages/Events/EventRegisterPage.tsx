@@ -4,6 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
+import CancelIcon from '@mui/icons-material/Cancel';
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -266,6 +267,13 @@ const EventRegisterPage = () => {
               >
                 <DialogTitle id="add-student-dialog-title">
                   Agregar Nuevo Becario
+                  <IconButton
+                    aria-label="close"
+                    onClick={handleAddStudentClose}
+                    style={{ color: '#231F74', position:'absolute', right:7, top:10}}
+                   >
+                  <CancelIcon />
+                  </IconButton>
                   <Typography
                     variant="subtitle2"
                     color="textSecondary"
@@ -302,7 +310,7 @@ const EventRegisterPage = () => {
                   <Button
                     onClick={handleAddStudentClose}
                     style={{
-                      backgroundColor: "#005b8f",
+                      backgroundColor: "#231F74",
                       color: "#fff",
                     }}
                   >

@@ -19,6 +19,7 @@ interface ConfirmDialogProps {
   children?: ReactNode;
   primaryButtonText?: string;
   secondaryButtonText?: string;
+  onSecondaryButtonClick?: () => void; 
 }
 
 const ConfirmDialog = ({
@@ -30,8 +31,8 @@ const ConfirmDialog = ({
   children,
   primaryButtonText,
   secondaryButtonText,
+  onSecondaryButtonClick, 
 }: ConfirmDialogProps) => {
-  //TODO: refactor all confirm dialogs
   return (
     <Dialog
       open={open}
@@ -53,7 +54,7 @@ const ConfirmDialog = ({
           onClick={onClose}
           sx={{
             position: "absolute",
-            right: 8,
+            right: 1,
             top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
@@ -69,7 +70,7 @@ const ConfirmDialog = ({
       {children}
       <DialogActions sx={{ justifyContent: "flex-end", padding: "24px" }}>
         <Button
-          onClick={onClose}
+          onClick={onSecondaryButtonClick} 
           variant="contained"
           sx={{
             backgroundColor: "primary",
