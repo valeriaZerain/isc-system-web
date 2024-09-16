@@ -30,25 +30,98 @@ import { InternsInformation } from "../../models/internsInterface.ts";
 import { getInternList } from "../../services/internService.ts";
 
 const validationSchema = Yup.object({
-  title: Yup.string().required("El nombre del evento es obligatorio"),
-  description: Yup.string().required("La descripción es obligatoria"),
-  location: Yup.string().required("La ubicacion es obligatorio"),
-  date: Yup.date().required("La fecha es obligatoria"),
-  endDate: Yup.date().required("La fecha de finalización es obligatoria"),
-  duration: Yup.number()
+  title: Yup.string().required("El nombre del evento es obligatorio")
+  .min(5, "El nombre del evento debe tener al menos 5 caracteres")
+  .max(20, "El nombre del evento no puede tener más de 20 caracteres"),
+  description: Yup.string().required("La descripción es obligatoria")
+  .min(30, "El nombre del evento debe tener al menos 20 caracteres")
+  .max(200, "El nombre del evento no puede tener más de 200 caracteres"),
+  location: Yup.string().required("La ubicación es obligatoria"),
+  start_date: Yup.date()
+    .required("La fecha de inicio es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de inicio debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de inicio no puede ser posterior a dos años desde la fecha actual"
+    ),
+  end_date: Yup.date()
+    .required("La fecha de finalización es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de finalización debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de finalización no puede ser posterior a dos años desde la fecha actual"
+    )
+    .test("is-after-or-same-as-start", "La fecha de finalización debe ser igual o posterior a la fecha de inicio", function (value) {
+      const { start_date } = this.parent;
+      return dayjs(value).isSame(dayjs(start_date), 'day')||  dayjs(value).isAfter(dayjs(start_date), 'day');
+    }),
+  start_cancellation_date: Yup.date()
+    .required("La fecha de inicio de bajas es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de inicio de bajas debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de inicio de bajas no puede ser posterior a dos años desde la fecha actual"
+    ),
+  end_cancellation_date: Yup.date()
+    .required("La fecha de fin de bajas es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha de fin de bajas debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha de fin de bajas no puede ser posterior a dos años desde la fecha actual"
+    )
+    .test(
+      "is-before-start",
+      "La fecha límite debe ser anterior a la fecha de inicio",
+      function (value) {
+        const { start_date } = this.parent;
+        return dayjs(value).isBefore(dayjs(start_date));
+      }
+    ),
+  registration_deadline: Yup.date()
+    .required("La fecha límite de inscripción es obligatoria")
+    .min(
+      dayjs().startOf("day").toDate(),
+      "La fecha límite de inscripción debe ser igual o posterior al día actual"
+    )
+    .max(
+      dayjs().add(2, "year").toDate(),
+      "La fecha límite de inscripción no puede ser posterior a dos años desde la fecha actual"
+    )
+    .test(
+      "is-before-start",
+      "La fecha límite debe ser anterior a la fecha de inicio",
+      function (value) {
+        const { start_date } = this.parent;
+        return dayjs(value).isBefore(dayjs(start_date));
+      }
+    ),
+  duration_hours: Yup.number()
     .required("La duración es obligatoria")
-    .min(1, "La duracion minima es de 1 hora"),
-  scholarshipHours: Yup.string().required(
-    "Las horas becarias son obligatorias"
-  ),
-  maxParticipants: Yup.number()
+    .min(1, "La duración mínima es de 1 hora"),
+  assigned_hours: Yup.number()
+    .required("Las horas becarias son obligatorias")
+    .min(1, "La duración mínima es de 1 hora")
+    .max(168, "La duración máxima es de 168 horas"),
+  max_interns: Yup.number()
     .required("El número de becarios es obligatorio")
-    .min(1, "Debe haber al menos un becario"),
-  minParticipants: Yup.number()
+    .min(1, "Debe haber al menos un becario")
+    .min(Yup.ref('min_interns'), "Debe ser mayor a Mínimo de Becarios"),
+  min_interns: Yup.number()
     .required("La cantidad mínima de becarios es obligatoria")
     .min(1, "Debe haber al menos 1 becario"),
-
-  responsiblePerson: Yup.number().notRequired(),
+  responsible_intern_id: Yup.number().notRequired(),
 });
 
 const UpdateEventForm = () => {
@@ -111,67 +184,95 @@ const UpdateEventForm = () => {
     fetchEvent();
   }, [id_event]);
 
-  const handleUpdate = async () => {
-    setLoading(true);
-    try {
-      const formatWithTimezone = (date: string) => {
-        return dayjs(date).tz("America/Caracas").format();
-      };
-
-      const valuesWithTimezone = {
-        ...formik.values,
-        start_date: formatWithTimezone(formik.values.start_date),
-        end_date: formatWithTimezone(formik.values.end_date),
-        start_cancellation_date: formatWithTimezone(
-          formik.values.start_cancellation_date!
-        ),
-        end_cancellation_date: formatWithTimezone(
-          formik.values.end_cancellation_date!
-        ),
-        registration_deadline: formatWithTimezone(
-          formik.values.registration_deadline
-        ),
-      };
-      if (id_event) {
-        await updateEventService(parseInt(id_event), valuesWithTimezone);
-      }
-      formik.resetForm();
-      setMessage("Evento actualizado con éxito");
-      setSuccessDialog(true);
-      navigate("/programDirector");
-    } catch (error) {
-      console.error(error);
-      setMessage("Error al actualizar el evento");
-      setErrorDialog(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const formik = useFormik<Event>({
     initialValues: {
-      title: event?.title || "",
+      title: "",
       is_finished: false,
-      start_date: dayjs(event?.start_date).format("YYYY-MM-DD") || "",
-      end_date: dayjs(event?.end_date).format("YYYY-MM-DD") || "",
-      duration_hours: event?.duration_hours || 0,
-      assigned_hours: event?.assigned_hours || 0,
-      location: event?.location || "",
-      description: event?.description || "",
-      max_interns: event?.max_interns || 0,
-      min_interns: event?.min_interns || 0,
-      responsible_intern_id: event?.responsible_intern_id || 0,
-      registration_deadline:
-        dayjs(event?.registration_deadline).format("YYYY-MM-DD") || "",
-      start_cancellation_date:
-        dayjs(event?.start_cancellation_date).format("YYYY-MM-DD") || "",
-      end_cancellation_date:
-        dayjs(event?.end_cancellation_date).format("YYYY-MM-DD") || "",
+      start_date: "",
+      end_date: "",
+      duration_hours: 0,
+      assigned_hours: 0,
+      location: "",
+      description: "",
+      max_interns: 0,
+      min_interns: 0,
+      responsible_intern_id: 0,
+      registration_deadline: "",
+      start_cancellation_date: "",
+      end_cancellation_date: "",
     },
     validationSchema,
-    enableReinitialize: true,
-    onSubmit: handleUpdate,
+    validateOnChange: true,
+    onSubmit: async () => {
+      setLoading(true);
+      try {
+        const formatWithTimezone = (date: string) =>
+          dayjs(date)
+            .tz("America/Caracas")
+            .set("hour", 23)
+            .set("minute", 59)
+            .set("second", 59)
+            .format();
+
+        const valuesWithTimezone = {
+          ...formik.values,
+          start_date: formatWithTimezone(formik.values.start_date),
+          end_date: formatWithTimezone(formik.values.end_date),
+          start_cancellation_date: formatWithTimezone(
+            formik.values.start_cancellation_date!
+          ),
+          end_cancellation_date: formatWithTimezone(
+            formik.values.end_cancellation_date!
+          ),
+          registration_deadline: formatWithTimezone(
+            formik.values.registration_deadline
+          ),
+        };
+
+        const { responsible_intern_id, ...eventData } = valuesWithTimezone;
+        const finalEventData =
+          responsible_intern_id === -1
+            ? eventData
+            : { ...eventData, responsible_intern_id };
+        if (id_event) {
+          await updateEventService(parseInt(id_event), finalEventData);
+        }
+        formik.resetForm();
+        navigate("/programDirector");
+        setMessage("Evento creado con éxito");
+        setSuccessDialog(true);
+      } catch (error) {
+        setMessage("Error al crear el evento");
+        setErrorDialog(true);
+      } finally {
+        setLoading(false);
+      }
+    },
   });
+
+  useEffect(() => {
+    if (event) {
+      formik.setValues({
+        title: event.title || "",
+        is_finished: event.is_finished || false,
+        start_date: dayjs(event.start_date).format("YYYY-MM-DD") || "",
+        end_date: dayjs(event.end_date).format("YYYY-MM-DD") || "",
+        duration_hours: event.duration_hours || 0,
+        assigned_hours: event.assigned_hours || 0,
+        location: event.location || "",
+        description: event.description || "",
+        max_interns: event.max_interns || 0,
+        min_interns: event.min_interns || 0,
+        responsible_intern_id: event.responsible_intern_id || 0,
+        registration_deadline:
+          dayjs(event.registration_deadline).format("YYYY-MM-DD") || "",
+        start_cancellation_date:
+          dayjs(event.start_cancellation_date).format("YYYY-MM-DD") || "",
+        end_cancellation_date:
+          dayjs(event.end_cancellation_date).format("YYYY-MM-DD") || "",
+      });
+    }
+  }, [event]);
 
   return (
     <Grid container spacing={0} alignItems="center">
@@ -547,7 +648,6 @@ const UpdateEventForm = () => {
                 variant="contained"
                 color="primary"
                 type="submit"
-                onClick={handleUpdate}
               >
                 Actualizar
               </Button>

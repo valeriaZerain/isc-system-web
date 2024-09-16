@@ -13,13 +13,15 @@ import {
   deleteEventService,
   getEventsInformationsService,
 } from "../../services/eventsService";
-import { EventInformations } from "../../models/eventInterface";
+import { EventInformations, EventNameSupervisor } from "../../models/eventInterface";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import { getInternData } from "../../services/internService";
 
 const EventTable = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [events, setEvents] = useState<EventInformations[]>();
+  const [eventsSupervisor, setEventsSupervisor] = useState<EventNameSupervisor[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [alert, setAlert] = useState<{
@@ -35,9 +37,46 @@ const EventTable = () => {
     }
   };
 
+  const fetchEventsInterns = async () => {
+    try {
+      if (events) {
+        const promises = events.map(async (event: EventInformations) => {
+          const formattedStartDate = dayjs(event.start_date).format("DD/MM/YYYY");
+          if (event.responsible_intern_id) {
+            const res = await getInternData(event.responsible_intern_id);
+            const eventNew :EventNameSupervisor = {
+              ...event,
+              start_date: formattedStartDate,
+              name_supervisor: res.data ? `${res.data.name} ${res.data.lastname}` : "Ninguno"
+            };
+            return eventNew;
+          } else {
+            const eventNew: EventNameSupervisor = {
+              ...event,
+              name_supervisor: "Ninguno"
+            };
+            return eventNew
+          }
+        });
+  
+        const updatedEventsSupervisor = await Promise.all(promises);
+        setEventsSupervisor(updatedEventsSupervisor);
+      }
+    } catch (error) {
+      console.error("Error fetching Intern:", error);
+    }
+  };
+  
   useEffect(() => {
     fetchEvents();
   }, []);
+  
+  useEffect(() => {
+    if (events) {
+      fetchEventsInterns();
+    }
+  }, [events]);
+
 
   const columns: GridColDef[] = [
     {
@@ -46,9 +85,6 @@ const EventTable = () => {
       headerAlign: "center",
       align: "center",
       flex: 1,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      valueGetter: (params: any) =>
-        dayjs(params.start_date).format("DD/MM/YYYY"),
       renderHeader: (params) => (
         <Tooltip title="Fecha Inicio" placement="bottom">
           <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
@@ -68,7 +104,7 @@ const EventTable = () => {
       ),
     },
     {
-      field: "responsible_intern_id",
+      field: "name_supervisor",
       headerName: "Supervisor",
       headerAlign: "center",
       align: "center",
@@ -204,7 +240,7 @@ const EventTable = () => {
       <div style={{ width: "100%", overflowX: "auto" }}>
         <div style={{ minWidth: "800px" }}>
           <DataGrid
-            rows={events || []}
+            rows={eventsSupervisor || []}
             columns={columns}
             getRowId={(row) => row.id}
             autoHeight
