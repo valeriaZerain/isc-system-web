@@ -550,7 +550,7 @@ const CreateForm = () => {
                           intern.id === formik.values.responsible_intern_id
                       ) || null
                     }
-                    onChange={(event, newValue) =>
+                    onChange={(_, newValue) =>
                       formik.setFieldValue(
                         "responsible_intern_id",
                         newValue?.id || ""
