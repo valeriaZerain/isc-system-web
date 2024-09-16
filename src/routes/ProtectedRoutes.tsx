@@ -297,7 +297,7 @@ const protectedRoutes = [
       {
         path: "/eventHistory",
         element: (
-          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <EventHistory />
           </RoleGuard>
         ),
@@ -305,7 +305,7 @@ const protectedRoutes = [
       {
         path: "/preInscriptions",
         element: (
-          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN]}>
+          <RoleGuard allowedRoles={[ADMIN, STUDENT, INTERN, SUPERVISOR]}>
             <MyEventsTable />
           </RoleGuard>
         ),

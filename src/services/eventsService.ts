@@ -221,6 +221,7 @@ export const getSupervisorEventByIdService = async (id_user: number) => {
       (intern: CompleteIntern) => intern.user_profile_id === id_user
     );
     const supervisedEvent = intern.events?.find((event) => event.is_supervisor);
+    console.log(supervisedEvent, 'xd')
     if (!supervisedEvent) {
       return { error: "No supervised events" };
     }
@@ -236,7 +237,7 @@ export const getSupervisorEventByIdService = async (id_user: number) => {
     if (axios.isAxiosError(error)) {
       return { error: error.response?.data.message || "Network error" };
     } else {
-      return { error: "An unexpected error occurred" };
+      return { error: "An unexpected error occurred", err: error };
     }
   }
 };
