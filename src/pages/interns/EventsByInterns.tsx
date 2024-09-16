@@ -55,7 +55,7 @@ const EventByInterns = () => {
       cellClassName: "cellStyle",
     },
     {
-      field: "total_hours",
+      field: "completed_hours",
       headerName: "Horas Hechas",
       headerAlign: "center",
       align: "center",
@@ -65,7 +65,7 @@ const EventByInterns = () => {
       valueGetter: (params: GridRenderCellParams) => `${params} horas`,
     },
     {
-      field: "compled_hours",
+      field: "pending_hours",
       headerName: "Horas Faltantes",
       headerAlign: "center",
       align: "center",

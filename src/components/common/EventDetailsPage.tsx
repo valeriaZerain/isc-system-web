@@ -1,9 +1,11 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Container, Grid, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { FullEvent } from "../../models/eventInterface";
 import { internRegisterStates } from "../../constants/internRegisterStates";
 import dayjs from "dayjs";
+import { InternsInformation } from "../../models/internsInterface";
+import { getInternData } from "../../services/internService";
 
 interface TablePageProps {
   event: FullEvent;
@@ -11,6 +13,32 @@ interface TablePageProps {
 }
 
 const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
+  const [internEventInfomation, setInternEventInfomation] =
+    useState<InternsInformation>();
+  const [responsible, setResponsible] = useState<String>("Ninguno");
+
+  const fetchInternEvent = async () => {
+    try {
+      if (event.responsible_intern_id) {
+        const res = await getInternData(event.responsible_intern_id);
+        setInternEventInfomation(res.data);
+      }
+    } catch (error) {
+      console.error("Error fetching Intern:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (internEventInfomation) {
+      setResponsible(
+        internEventInfomation.name + " " + internEventInfomation.lastname
+      );
+    }
+  }, [internEventInfomation]);
+  useEffect(() => {
+    fetchInternEvent();
+  }, [event]);
+  
   const { PENDING } = internRegisterStates;
   return event ? (
     <Container fixed>
@@ -36,7 +64,7 @@ const TablePage: React.FC<TablePageProps> = ({ event, children }) => {
                 {dayjs(event.end_date).format("DD/MM/YYYY")}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                <strong>Encargado:</strong> {event.responsible_intern_id}
+                <strong>Encargado:</strong> {responsible}
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 <strong>Ubicación:</strong> {event.location}
