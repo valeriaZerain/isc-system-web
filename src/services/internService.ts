@@ -1,5 +1,6 @@
 import axios from "axios";
 import apiClient from "./apiInstance";
+import { Interns } from "../models/internsInterface";
 
 export const getInternService = async (intern_id: number) => {
   try {
@@ -69,7 +70,6 @@ export const getInternList = async () => {
   }
 };
 
-
 export const getInternInformation = async (user_id: number) => {
   try {
     const response = await apiClient.get(`/interns/${user_id}/intern`);
@@ -102,4 +102,21 @@ export const getAllCompleteInternService = async () => {
       return { error: "An unexpected error occurred" };
     }
   }
-}
+};
+
+export const createIntern = async (intern: Partial<Interns>) => {
+  try {
+    const response = await apiClient.post(`/interns/`, intern);
+    if (response.status === 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to create intern" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
