@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
+import CancelIcon from '@mui/icons-material/Cancel';
 import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
@@ -146,6 +147,13 @@ const EventByInterns = () => {
             {students.find((student) => student.id === selectedId)?.total_hours}{" "}
             horas
           </Typography>
+          <IconButton
+            aria-label="close"
+            onClick={handleEditHoursClose}
+            style={{ color: '#231F74', position:'absolute', right:3, top:11}}
+          >
+            <CancelIcon />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           {selectedId && (
