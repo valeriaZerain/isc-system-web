@@ -40,7 +40,6 @@ const EventTable = () => {
   const fetchEventsInterns = async () => {
     try {
       if (events) {
-        // Procesar todos los eventos en paralelo
         const promises = events.map(async (event: EventInformations) => {
           if (event.responsible_intern_id) {
             const res = await getInternData(event.responsible_intern_id);
@@ -59,7 +58,7 @@ const EventTable = () => {
         });
   
         const updatedEventsSupervisor = await Promise.all(promises);
-        setEventsSupervisor(updatedEventsSupervisor); // Actualizamos eventsSupervisor con los supervisores
+        setEventsSupervisor(updatedEventsSupervisor);
       }
     } catch (error) {
       console.error("Error fetching Intern:", error);
