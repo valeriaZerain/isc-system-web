@@ -7,7 +7,6 @@ interface SimpleHoursCardProps {
     count: number;
     subtitle: string;
 }
-
 function SimpleHoursCard({
     backgroundColor,
     textColor,

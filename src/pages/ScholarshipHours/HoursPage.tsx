@@ -31,7 +31,7 @@ function HoursPage() {
                 backgroundColor="#f3a43f"
                 textColor="#FFFFFF"
                 title="Total de Horas Requeridas"
-                subtitle="SEMESTRE II  2024"
+                subtitle="SEMESTRE II   2024"
                 count={intern?.total_hours || 0}
                 />
             </Grid>
