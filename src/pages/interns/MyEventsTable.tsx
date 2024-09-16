@@ -367,6 +367,3 @@ const MyEventsTable = () => {
 };
 
 export default MyEventsTable;
-function setInternInfomation(data: any) {
-  throw new Error("Function not implemented.");
-}
