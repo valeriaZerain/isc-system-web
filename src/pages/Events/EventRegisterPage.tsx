@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import CancelIcon from '@mui/icons-material/Cancel';
+import CancelIcon from "@mui/icons-material/Cancel";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -15,7 +15,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Chip, TextField } from "@mui/material";
-import { EventDetails, FullEvent } from "../../models/eventInterface";
+import { FullEvent } from "../../models/eventInterface";
 import EventDetailsPage from "../../components/common/EventDetailsPage";
 import {
   getFullEventInformationService,
@@ -27,7 +27,6 @@ const EventRegisterPage = () => {
   const [addStudentOpen, setAddStudentOpen] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
   const [event, setEvent] = useState<FullEvent>();
-  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [students, setStudents] = useState<any[]>([]);
   const [editHoursOpen, setEditHoursOpen] = useState(false);
   const [newHours, setNewHours] = useState("");
@@ -38,25 +37,6 @@ const EventRegisterPage = () => {
     const res = id_event && (await getFullEventInformationService(id_event));
     if (res.success) {
       setEvent(res.data);
-    }
-  };
-
-  const setupEventDetails = () => {
-    if (event) {
-      const details: EventDetails = {
-        title: event.title,
-        date: dayjs(event.start_date),
-        endDate: dayjs(event.end_date),
-        duration: event.duration_hours,
-        scholarshipHours: event.assigned_hours.toString(),
-        location: event.location,
-        maxParticipants: event.max_interns,
-        minParticipants: event.min_interns,
-        responsiblePerson: event.responsible_intern_id?.toString() || "",
-        description: event.description || "",
-        status: "PENDIENTE",
-      };
-      setEventDetails(details);
     }
   };
 
@@ -79,7 +59,6 @@ const EventRegisterPage = () => {
   }, [id_event]);
 
   useEffect(() => {
-    setupEventDetails();
     setupStudents();
   }, [event]);
 
@@ -270,9 +249,14 @@ const EventRegisterPage = () => {
                   <IconButton
                     aria-label="close"
                     onClick={handleAddStudentClose}
-                    style={{ color: '#231F74', position:'absolute', right:7, top:10}}
-                   >
-                  <CancelIcon />
+                    style={{
+                      color: "#231F74",
+                      position: "absolute",
+                      right: 7,
+                      top: 10,
+                    }}
+                  >
+                    <CancelIcon />
                   </IconButton>
                   <Typography
                     variant="subtitle2"

@@ -54,48 +54,50 @@ const PermissionTable = () => {
 
   return (
     <>
-      <Table className="border-table">
-        <TableHead className="large-header">
-          <TableRow>
-            <TableCell>Acción</TableCell>
-            <TableCell>Permisos</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sections.length > 0 ? (
-            sections.map((section, sectionIndex) => (
-              <React.Fragment key={sectionIndex}>
-                <TableRow>
-                  <TableCell colSpan={2}>
-                    <Typography variant="h6">{section.subtitle}</Typography>
-                  </TableCell>
-                </TableRow>
-                {section.permissions.map((permission: any, permissionIndex: number) => (
-                  <TableRow key={permissionIndex}>
-                    <TableCell>{permission.action}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={permission.state}
-                        onChange={handleSwitchChange(sectionIndex, permissionIndex)}
-                      />
+      <Box sx={{ overflow: 'auto', height: '400px' }}> {/*TODO Hacer que el tamaño varie según el dispositivo */}
+        <Table className="border-table">
+          <TableHead className="large-header">
+            <TableRow>
+              <TableCell>Acción</TableCell>
+              <TableCell>Permisos</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sections.length > 0 ? (
+              sections.map((section, sectionIndex) => (
+                <React.Fragment key={sectionIndex}>
+                  <TableRow>
+                    <TableCell colSpan={2}>
+                      <Typography variant="h6">{section.subtitle}</Typography>
                     </TableCell>
                   </TableRow>
-                ))}
-              </React.Fragment>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={2}>No data available</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                  {section.permissions.map((permission: any, permissionIndex: number) => (
+                    <TableRow key={permissionIndex}>
+                      <TableCell>{permission.action}</TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={permission.state}
+                          onChange={handleSwitchChange(sectionIndex, permissionIndex)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </React.Fragment>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={2}>No data available</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Box>
       {buttonVisible && (
-        <Box display="flex" justifyContent="flex-end" sx={{marginTop: "20px"}}>
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: "20px" }}>
           <Button
             variant="contained"
             color="primary"
-            sx={{ marginRight: '20px' }}
+            sx={{ marginRight: '20px', borderRadius: '16px' }}
             onClick={() => { setShowModal(true) }}
           >
             Guardar
@@ -103,6 +105,7 @@ const PermissionTable = () => {
           <Button
             variant="outlined"
             color="secondary"
+            sx={{ borderRadius: '16px' }}
             onClick={cancelChanges}
           >
             Cancelar

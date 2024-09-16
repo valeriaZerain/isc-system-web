@@ -2,6 +2,8 @@ import { Dayjs } from "dayjs";
 import { InternsInformation } from "./internsInterface";
 
 // TODO: refactor EventDetails ocurrences to use Event
+
+export type EventStatus = "PENDIENTE" | "ACEPTADO" | "RECHAZADO";
 export interface EventDetails {
   title: string;
   date: Dayjs;
@@ -13,7 +15,7 @@ export interface EventDetails {
   minParticipants: number;
   description: string;
   responsiblePerson: string;
-  status: "PENDIENTE" | "ACEPTADO" | "RECHAZADO";
+  status: EventStatus;
 }
 
 export interface Event {
@@ -57,4 +59,23 @@ export interface EventInterns {
   notes: string;
   created_at: Dayjs;
   updated_at: Dayjs;
+}
+export interface EventInternsType extends Event {
+  type: string;
+}
+
+export interface EventScholar {
+  id_event: number;
+  name: string;
+  description: string;
+  validatedHours: string;
+  startDate: Dayjs;
+  duration: number;
+  place: string;
+  maxInterns: number;
+  minInterns: number;
+  responsiblePerson: string;
+  pendingInterns: number;
+  selectedInterns: number;
+  status: EventStatus;
 }
