@@ -59,7 +59,6 @@ const CompleteScholarshipHourEventCard: FC<CSHCardProps> = ({ event }) => {
     setConfirmDialogOpen(true);
   };
 
-  //FIX: check me
   const handleConfirmDialogClose = () => {
     setConfirmDialogOpen(false);
   };
