@@ -41,10 +41,12 @@ const EventTable = () => {
     try {
       if (events) {
         const promises = events.map(async (event: EventInformations) => {
+          const formattedStartDate = dayjs(event.start_date).format("DD/MM/YYYY");
           if (event.responsible_intern_id) {
             const res = await getInternData(event.responsible_intern_id);
             const eventNew :EventNameSupervisor = {
               ...event,
+              start_date: formattedStartDate,
               name_supervisor: res.data ? `${res.data.name} ${res.data.lastname}` : "Ninguno"
             };
             return eventNew;
@@ -83,9 +85,6 @@ const EventTable = () => {
       headerAlign: "center",
       align: "center",
       flex: 1,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      valueGetter: (params: any) =>
-        dayjs(params.start_date).format("DD/MM/YYYY"),
       renderHeader: (params) => (
         <Tooltip title="Fecha Inicio" placement="bottom">
           <span style={{ fontWeight: "bold" }}>{params.colDef.headerName}</span>
