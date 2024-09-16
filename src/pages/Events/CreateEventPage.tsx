@@ -27,8 +27,12 @@ import { InternsInformation } from "../../models/internsInterface.ts";
 import { getInternList } from "../../services/internService.ts";
 
 const validationSchema = Yup.object({
-  title: Yup.string().required("El nombre del evento es obligatorio"),
-  description: Yup.string().required("La descripción es obligatoria"),
+  title: Yup.string().required("El nombre del evento es obligatorio")
+  .min(5, "El nombre del evento debe tener al menos 5 caracteres")
+  .max(20, "El nombre del evento no puede tener más de 20 caracteres"),
+  description: Yup.string().required("La descripción es obligatoria")
+  .min(30, "El nombre del evento debe tener al menos 20 caracteres")
+  .max(200, "El nombre del evento no puede tener más de 200 caracteres"),
   location: Yup.string().required("La ubicación es obligatoria"),
   start_date: Yup.date()
     .required("La fecha de inicio es obligatoria")
@@ -49,7 +53,11 @@ const validationSchema = Yup.object({
     .max(
       dayjs().add(2, "year").toDate(),
       "La fecha de finalización no puede ser posterior a dos años desde la fecha actual"
-    ),
+    )
+    .test("is-after-or-same-as-start", "La fecha de finalización debe ser igual o posterior a la fecha de inicio", function (value) {
+      const { start_date } = this.parent;
+      return dayjs(value).isSame(dayjs(start_date), 'day')||  dayjs(value).isAfter(dayjs(start_date), 'day');
+    }),
   start_cancellation_date: Yup.date()
     .required("La fecha de inicio de bajas es obligatoria")
     .min(
@@ -101,10 +109,12 @@ const validationSchema = Yup.object({
     .min(1, "La duración mínima es de 1 hora"),
   assigned_hours: Yup.number()
     .required("Las horas becarias son obligatorias")
-    .min(1, "La duración mínima es de 1 hora"),
+    .min(1, "La duración mínima es de 1 hora")
+    .max(168, "La duración máxima es de 168 horas"),
   max_interns: Yup.number()
     .required("El número de becarios es obligatorio")
-    .min(1, "Debe haber al menos un becario"),
+    .min(1, "Debe haber al menos un becario")
+    .min(Yup.ref('min_interns'), "Debe ser mayor a Mínimo de Becarios"),
   min_interns: Yup.number()
     .required("La cantidad mínima de becarios es obligatoria")
     .min(1, "Debe haber al menos 1 becario"),
@@ -441,6 +451,12 @@ const CreateForm = () => {
                           formik.touched.duration_hours &&
                           formik.errors.duration_hours
                         }
+                        inputProps={{ min: 0 }}
+                        onKeyDown={(e) => {
+                          if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </Grid>
                   </Grid>
@@ -474,6 +490,12 @@ const CreateForm = () => {
                           formik.touched.assigned_hours &&
                           formik.errors.assigned_hours
                         }
+                        inputProps={{ min: 0 }}
+                        onKeyDown={(e) => {
+                          if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </Grid>
                     <Grid item xs={3}>
@@ -495,6 +517,12 @@ const CreateForm = () => {
                           formik.touched.min_interns &&
                           formik.errors.min_interns
                         }
+                        inputProps={{ min: 0 }}
+                        onKeyDown={(e) => {
+                          if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </Grid>
                     <Grid item xs={3}>
@@ -516,6 +544,12 @@ const CreateForm = () => {
                           formik.touched.max_interns &&
                           formik.errors.max_interns
                         }
+                        inputProps={{ min: 0 }}
+                        onKeyDown={(e) => {
+                          if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </Grid>
                   </Grid>
