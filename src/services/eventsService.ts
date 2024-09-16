@@ -221,7 +221,6 @@ export const getSupervisorEventByIdService = async (id_user: number) => {
       (intern: CompleteIntern) => intern.user_profile_id === id_user
     );
     const supervisedEvent = intern.events?.find((event) => event.is_supervisor);
-    console.log(!supervisedEvent)
     if (!supervisedEvent) {
       return { error: "No supervised events" };
     }
