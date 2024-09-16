@@ -9,7 +9,7 @@ const EventsPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [events, setEvents] = useState<Event[]>();
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -40,10 +40,15 @@ const EventsPage: React.FC = () => {
           eventEndDate.isAfter(today, "day")
         );
       } else if (tabValue === 1) {
-        return eventStartDate.isAfter(today, "day") && eventEndDate.isAfter(today, "day");
+        return (
+          eventStartDate.isAfter(today, "day") &&
+          eventEndDate.isAfter(today, "day")
+        );
       } else if (tabValue === 2) {
-        return eventEndDate.isBefore(today, "day") || 
-        eventEndDate.isSame(today, "day");
+        return (
+          eventEndDate.isBefore(today, "day") ||
+          eventEndDate.isSame(today, "day")
+        );
       }
 
       return true;

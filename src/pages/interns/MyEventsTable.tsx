@@ -9,10 +9,9 @@ import {
   Snackbar,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import CancelIcon from '@mui/icons-material/Cancel';
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
 import { useUserStore } from "../../store/store";
@@ -33,6 +32,19 @@ interface RowData {
   hours: string;
   status: string;
 }
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "PENDIENTE":
+      return "#5F9EA0";
+    case "ACEPTADO":
+      return "#32CD32";
+    case "SUSPLENTE":
+      return "#000000";
+    default:
+      return "#FF0000";
+  }
+};
 
 const MyEventsTable = () => {
   const statusTranslation = (status: string) => {
@@ -56,8 +68,6 @@ const MyEventsTable = () => {
     message: string;
   } | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-  const navigate = useNavigate();
 
   const fetchMyEvents = async () => {
     if (internInfomation?.id_intern) {
@@ -102,7 +112,7 @@ const MyEventsTable = () => {
     ...buttonStyle,
     borderRadius: "30px",
     padding: "5px 10px",
-    textTransform: "none",
+    textTransform: "none" as const,
   };
 
   const columns: GridColDef[] = [
@@ -160,21 +170,12 @@ const MyEventsTable = () => {
       field: "status",
       headerName: "Estado",
       flex: 1,
-      renderCell: (params: any) => (
+      renderCell: (params: GridRenderCellParams) => (
         <Button
           variant="contained"
           style={{
             ...statusButtonStyle,
-            backgroundColor:
-              params.row.status === "PENDIENTE"
-                ? "#5F9EA0"
-                : params.row.status === "ACEPTADO"
-                ? "#32CD32"
-                : params.row.status === "SUSPLENTE"
-                ? "#000000"
-                : "#FF0000",
-            color: "#FFFFFF",
-            cursor: "default",
+            backgroundColor: getStatusColor(params.row.status),
           }}
           disabled
         >
@@ -247,17 +248,7 @@ const MyEventsTable = () => {
         <ContainerPage
           title="Eventos actuales"
           subtitle="Administra y visualiza tus eventos"
-          actions={
-            <>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/eventHistory")}
-              >
-                HISTORIAL
-              </Button>
-            </>
-          }
+          actions={<></>}
         >
           <div style={{ height: 500, width: "100%" }}>
             <DataGrid
@@ -299,7 +290,12 @@ const MyEventsTable = () => {
           <IconButton
             aria-label="close"
             onClick={handleDialogClose}
-            style={{ color: '#231F74', position:'absolute', right:3, top:11}}
+            style={{
+              color: "#231F74",
+              position: "absolute",
+              right: 3,
+              top: 11,
+            }}
           >
             <CancelIcon />
           </IconButton>
@@ -358,6 +354,3 @@ const MyEventsTable = () => {
 };
 
 export default MyEventsTable;
-function setInternInfomation(data: any) {
-  throw new Error("Function not implemented.");
-}

@@ -57,7 +57,17 @@ const EventByInterns = () => {
     },
     {
       field: "total_hours",
-      headerName: "Horas asignadas",
+      headerName: "Horas Hechas",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+      headerClassName: "headerStyle",
+      cellClassName: "cellStyle",
+      valueGetter: (params: GridRenderCellParams) => `${params} horas`,
+    },
+    {
+      field: "compled_hours",
+      headerName: "Horas Faltantes",
       headerAlign: "center",
       align: "center",
       flex: 1,
@@ -89,14 +99,14 @@ const EventByInterns = () => {
   return (
     <div style={{ height: "100vh", padding: "20px" }}>
       <Typography variant="h4" color="primary" style={{ marginBottom: "10px" }}>
-        Becarios
+        Lista de Becarios
       </Typography>
       <Typography
         variant="subtitle1"
         color="textSecondary"
         style={{ marginBottom: "20px" }}
       >
-        Lista de becarios
+        Eventos hechos por becarios
       </Typography>
 
       <div style={{ height: 400, width: "100%" }}>
