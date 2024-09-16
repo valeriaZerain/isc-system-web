@@ -10,8 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CloseIcon from "@mui/icons-material/Close";
+import CancelIcon from '@mui/icons-material/Cancel';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -59,9 +58,6 @@ const MyEventsTable = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const navigate = useNavigate();
-  const handleBackClick = () => {
-    navigate("/scholarshipHours");
-  };
 
   const fetchMyEvents = async () => {
     if (internInfomation?.id_intern) {
@@ -303,14 +299,9 @@ const MyEventsTable = () => {
           <IconButton
             aria-label="close"
             onClick={handleDialogClose}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
+            style={{ color: '#231F74', position:'absolute', right:3, top:11}}
           >
-            <CloseIcon />
+            <CancelIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -323,7 +314,7 @@ const MyEventsTable = () => {
             onClick={handleDialogClose}
             variant="contained"
             sx={{
-              backgroundColor: "primary",
+              backgroundColor: "#231F74",
               color: "white",
               marginRight: 2,
               fontWeight: "bold",
