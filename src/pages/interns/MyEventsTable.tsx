@@ -12,7 +12,6 @@ import {
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
 import { useUserStore } from "../../store/store";
@@ -69,8 +68,6 @@ const MyEventsTable = () => {
     message: string;
   } | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-  const navigate = useNavigate();
 
   const fetchMyEvents = async () => {
     if (internInfomation?.id_intern) {
