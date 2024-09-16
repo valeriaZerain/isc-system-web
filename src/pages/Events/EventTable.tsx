@@ -13,7 +13,10 @@ import {
   deleteEventService,
   getEventsInformationsService,
 } from "../../services/eventsService";
-import { EventInformations, EventNameSupervisor } from "../../models/eventInterface";
+import {
+  EventInformations,
+  EventNameSupervisor,
+} from "../../models/eventInterface";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import { getInternData } from "../../services/internService";
 
@@ -21,14 +24,15 @@ const EventTable = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [events, setEvents] = useState<EventInformations[]>();
-  const [eventsSupervisor, setEventsSupervisor] = useState<EventNameSupervisor[]>([]);
+  const [eventsSupervisor, setEventsSupervisor] = useState<
+    EventNameSupervisor[]
+  >([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [alert, setAlert] = useState<{
     severity: "success" | "error";
     message: string;
   } | null>(null);
-  //FIX: check me
 
   const fetchEvents = async () => {
     const res = await getEventsInformationsService();
@@ -41,24 +45,28 @@ const EventTable = () => {
     try {
       if (events) {
         const promises = events.map(async (event: EventInformations) => {
-          const formattedStartDate = dayjs(event.start_date).format("DD/MM/YYYY");
+          const formattedStartDate = dayjs(event.start_date).format(
+            "DD/MM/YYYY"
+          );
           if (event.responsible_intern_id) {
             const res = await getInternData(event.responsible_intern_id);
-            const eventNew :EventNameSupervisor = {
+            const eventNew: EventNameSupervisor = {
               ...event,
               start_date: formattedStartDate,
-              name_supervisor: res.data ? `${res.data.name} ${res.data.lastname}` : "Ninguno"
+              name_supervisor: res.data
+                ? `${res.data.name} ${res.data.lastname}`
+                : "Ninguno",
             };
             return eventNew;
           } else {
             const eventNew: EventNameSupervisor = {
               ...event,
-              name_supervisor: "Ninguno"
+              name_supervisor: "Ninguno",
             };
-            return eventNew
+            return eventNew;
           }
         });
-  
+
         const updatedEventsSupervisor = await Promise.all(promises);
         setEventsSupervisor(updatedEventsSupervisor);
       }
@@ -66,17 +74,16 @@ const EventTable = () => {
       console.error("Error fetching Intern:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchEvents();
   }, []);
-  
+
   useEffect(() => {
     if (events) {
       fetchEventsInterns();
     }
   }, [events]);
-
 
   const columns: GridColDef[] = [
     {
@@ -187,7 +194,24 @@ const EventTable = () => {
   };
 
   const handleView = (id: number) => {
-    navigate(`/interns/${id}`);
+    const event = events?.find((event) => id === event.id);
+    if (!event) {
+      console.error("Evento no encontrado");
+      return;
+    }
+    if (!event.end_cancellation_date) {
+      console.error("Fecha fin de bajas no encontrada");
+      return;
+    }
+
+    const endCancel = dayjs(event.end_cancellation_date);
+    const today = dayjs();
+
+    if (today.isAfter(endCancel)) {
+      navigate(`/eventRegisters/${id}`);
+    } else {
+      navigate(`/interns/${id}`);
+    }
   };
 
   const handleEdit = (id: string) => {
