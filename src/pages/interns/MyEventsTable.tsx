@@ -251,17 +251,7 @@ const MyEventsTable = () => {
         <ContainerPage
           title="Eventos actuales"
           subtitle="Administra y visualiza tus eventos"
-          actions={
-            <>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/eventHistory")}
-              >
-                HISTORIAL
-              </Button>
-            </>
-          }
+          actions={<></>}
         >
           <div style={{ height: 500, width: "100%" }}>
             <DataGrid
