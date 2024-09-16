@@ -4,10 +4,13 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../models/eventInterface";
-import { finishEventService, getFullEventInformationService } from "../../services/eventsService";
+import {
+  finishEventService,
+  getFullEventInformationService,
+} from "../../services/eventsService";
 import ConfirmDialog from "../common/ConfirmDialog";
 
 interface CSHCardProps {
@@ -15,8 +18,18 @@ interface CSHCardProps {
   children?: ReactNode;
 }
 
-const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
-  const { id, title, description, assigned_hours, start_date, duration_hours, location, max_interns, min_interns } = event;
+const CompleteScholarshipHourEventCard: FC<CSHCardProps> = ({ event }) => {
+  const {
+    id,
+    title,
+    description,
+    assigned_hours,
+    start_date,
+    duration_hours,
+    location,
+    max_interns,
+    min_interns,
+  } = event;
   const navigate = useNavigate();
   dayjs.locale("es");
 
@@ -46,6 +59,7 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
     setConfirmDialogOpen(true);
   };
 
+  //FIX: check me
   const handleConfirmDialogClose = () => {
     setConfirmDialogOpen(false);
   };
@@ -63,8 +77,8 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
     setConfirmDialogOpen(false);
   };
   const handleEditHours = () => {
-    setConfirmDialogOpen(false); 
-    goToEditHours(); 
+    setConfirmDialogOpen(false);
+    goToEditHours();
   };
 
   return (
@@ -72,7 +86,11 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
       <CardContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Typography fontSize={20} color="text.primary" sx={{ fontWeight: "bold" }}>
+            <Typography
+              fontSize={20}
+              color="text.primary"
+              sx={{ fontWeight: "bold" }}
+            >
               {title}
             </Typography>
           </Grid>
@@ -142,7 +160,7 @@ const CompleteScholarshipHourEventCard = ({ event }: CSHCardProps) => {
           "¿Estás seguro de que deseas finalizar este evento? Esta acción no se puede deshacer"
         }
         secondaryButtonText="Editar horas"
-        onSecondaryButtonClick={handleEditHours} 
+        onSecondaryButtonClick={handleEditHours}
       />
     </Card>
   );

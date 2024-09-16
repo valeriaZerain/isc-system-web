@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useState, MouseEvent } from "react"
 
-import { Box, Card, CardActionArea, CardContent, Collapse, IconButton, styled, Typography, useMediaQuery } from "@mui/material"
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Card, CardActionArea, CardContent, Collapse, IconButton, Menu, MenuItem, styled, Typography, useMediaQuery } from "@mui/material"
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import ConfirmDelete from "../common/ConfirmDelete"
@@ -24,6 +24,24 @@ const RoleComponent : React.FC<RoleComponentProps> = ({ role, selectedRole, onRo
     const [expanded, setExpanded] = useState(false)
     const [showDelete, setShowDelete] = useState<boolean>(false)
     const isSmall = useMediaQuery((theme: any) => theme.breakpoints.down('sm'));
+    const [anchorE1, setAnchorE1] = useState<null | HTMLElement> (null); 
+
+    const handleClick = (event: MouseEvent<HTMLElement>) => {
+        setAnchorE1(event.currentTarget);
+    }
+
+    const handleClose = () => {
+        setAnchorE1(null);
+    };
+
+    const hadleDeletClick = () => {
+        setShowDelete(true);
+        handleClose();
+    }
+
+    const hadleEditClick = () => {
+        handleClose();
+    }
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -55,11 +73,10 @@ const RoleComponent : React.FC<RoleComponentProps> = ({ role, selectedRole, onRo
                                 )}
 
                                 <IconButton
-                                    color="secondary"
-                                    aria-label="eliminar"
-                                    onClick={() => { setShowDelete(true) }}
-                                >
-                                    <DeleteIcon color = "primary"/>
+                                    color="inherit"
+                                    aria-label="more"
+                                    onClick={handleClick}>
+                                    <MoreHorizIcon color = "primary"/>
                                 </IconButton>
                             </Box>
                         </Box>
@@ -73,7 +90,14 @@ const RoleComponent : React.FC<RoleComponentProps> = ({ role, selectedRole, onRo
                     </Collapse>
                 )}
             </Card>
-
+            <Menu
+                anchorEl={anchorE1}
+                open={Boolean(anchorE1)}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={hadleEditClick}>Editar</MenuItem>
+                <MenuItem onClick={hadleDeletClick}>Eliminar</MenuItem>
+            </Menu>
             {showDelete && (
                 <ConfirmDelete roleName={role.roleName} isVisible={showDelete} setIsVisible={setShowDelete} onDelete={() => onDelete(role.roleName)}/>
             )}
@@ -81,4 +105,4 @@ const RoleComponent : React.FC<RoleComponentProps> = ({ role, selectedRole, onRo
     )
 }
 
-export default RoleComponent
+export default RoleComponent;

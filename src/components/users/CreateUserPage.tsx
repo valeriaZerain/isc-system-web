@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Chip, Divider, Grid, MenuItem, OutlinedInput, Select, TextField, Typography } from "@mui/material";
-import { FormContainer } from "../CreateGraduation/components/FormContainer";
+import { Box, Button, Chip, Dialog, DialogTitle, Divider, FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
+import { FormContainer } from "../../pages/CreateGraduation/components/FormContainer";
 import { getRoles } from "../../services/roleService";
-import SuccessDialog from "../../components/common/SucessDialog";
-import ErrorDialog from "../../components/common/ErrorDialog";
-import { getUserById, putUser, createUserWIthRoles } from "../../services/usersService";
+import SuccessDialog from "../common/SucessDialog";
+import ErrorDialog from "../common/ErrorDialog";
+import { putUser, createUserWIthRoles } from "../../services/usersService";
 import { Role } from "../../models/roleInterface";
+import { UserFormProps } from "../../models/userFormPropsInterface";
 
-const CreateUserPage = () => {
-
-  const navigate = useNavigate()
+const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) => {
   const [isSuccesOpen, setIsSuccessOpen] = useState<boolean>(false)
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false)
   const [roles, setRoles] = useState<Role[]>([])
-  const [isTeacher, setIsTeacher] = useState<boolean>(true)
-  const {id} = useParams()
+  const [isTeacher, setIsTeacher] = useState<boolean>(false)
 
   const validationSchema = Yup.object({
     name: Yup.string().required("El nombre completo es obligatorio"),
@@ -26,7 +23,7 @@ const CreateUserPage = () => {
     email: Yup.string()
       .email("Ingrese un correo electrónico válido")
       .required("El correo electrónico es obligatorio"),
-    cellphone: Yup.string()
+    phone: Yup.string()
       .matches(/^[0-9]{8}$/, "Ingrese un número de teléfono válido")
       .optional(),
     code: Yup.number().optional(),
@@ -41,20 +38,20 @@ const CreateUserPage = () => {
   const form = useFormik(
     {
       initialValues: {
-        name: "",
-        code: "",
-        lastname: "",
-        mothername: "",
-        email: "",
-        cellphone: "",
-        roles: [],
-        degree: ""
+        name: user?.name || "",
+        code: user?.code || "",
+        lastname: user?.lastname || "",
+        mothername: user?.mothername || "",
+        email: user?.email || "",
+        phone: user?.phone || "",
+        roles: user?.roles || [],
+        degree: user?.degree || ""
       },
       validationSchema,
       onSubmit: async (values, { resetForm }) => {
         try {
-          if(id)
-            await putUser(id, values)
+          if(user)
+            await putUser(user.id, values)
           else
             await createUserWIthRoles(values)
           setIsSuccessOpen(true)  
@@ -66,8 +63,8 @@ const CreateUserPage = () => {
     }
   )
 
-  const handleChangeIsTeacher = ({target}) => {
-    setIsTeacher(target.value)
+  const handleChangeIsTeacher = (event: SelectChangeEvent<boolean>) => {
+    setIsTeacher(event.target.value as boolean);
   }
 
   const fetchRoles = async () => {
@@ -75,60 +72,51 @@ const CreateUserPage = () => {
     setRoles(rolesResponse)
   }
 
-  const fetchUser = async () => {
-    if(!id) return
-    const {name, code, lastname, mothername, email, cellphone, roles, degree, isTeacher} = await getUserById(parseInt(id))
-    form.setFieldValue('name', name)
-    form.setFieldValue('code', code)
-    form.setFieldValue('lastname', lastname)
-    form.setFieldValue('mothername', mothername)
-    form.setFieldValue('email', email)
-    form.setFieldValue('cellphone', cellphone)
-    form.setFieldValue('roles', roles)
-    form.setFieldValue('degree', degree)
-    setIsTeacher(isTeacher)
-  }
-
   useEffect(() => {
       fetchRoles()
-      fetchUser()
   }, [])
 
   return (
-    <FormContainer>
-      <form 
-      onSubmit={form.handleSubmit}
-      >
-        <Grid container spacing={2} sx={{ padding: 2 }}>
-          <Grid item>
-            <Typography variant="h4">
-              {
-                (id)? "Editar Usuario":
-                "Crear Nuevo Usuario"
-              }
-              </Typography>
-            <Typography variant="body2" sx={{ fontSize: 14, color: "gray" }}>
-              Ingrese los datos del {id && "nuevo"} usuario a continuación.
-            </Typography>
-            <Divider flexItem sx={{ mt: 2, mb: 2 }} />
-          </Grid>
-          {!id && <Grid container  sx={{padding: 2}} spacing={2}>
-            <Grid item>              
+    <Dialog open={openCreate}
+            onClose={handleClose}
+            maxWidth="lg"
+            >
+      <DialogTitle>
+        <Typography variant="h4">
+          {
+            user? "Editar usuario":
+            "Crear nuevo usuario"
+          }
+        </Typography>
+        <Typography variant="body2" sx={{ fontSize: 14, color: "gray" }}>
+          Ingrese los datos del {user && "nuevo"} usuario a continuación.
+        </Typography>
+      </DialogTitle>
+
+      <FormContainer>
+        <form 
+        onSubmit={form.handleSubmit}
+        >
+          {!user && <Grid container  sx={{padding: 2}} spacing={2}>
+            <Grid item xs={12} md={4}>            
               <Typography variant="h6">Tipo de Usuario</Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={12} md={8}>
               <Select
+                fullWidth
                 value={isTeacher}
                 label={"Estudiante o Docente"}
                 onChange={handleChangeIsTeacher}
               >
-                <MenuItem value={true}>Docente</MenuItem>
-                <MenuItem value={false}>Estudiante</MenuItem>
+                <MenuItem value={"true"}>Docente</MenuItem>
+                <MenuItem value={"false"}>Estudiante</MenuItem>
               </Select>
+              
             </Grid>
-          </Grid>}
+          </Grid>
+          }
           
-
+          <Divider flexItem sx={{ mt: 2, mb: 2 }} />
           <Grid item xs={12}>
             <Grid container spacing={2} sx={{ padding: 2 }}>
               <Grid item>
@@ -223,8 +211,6 @@ const CreateUserPage = () => {
             <Divider flexItem sx={{ my: 2 }} />
           </Grid>
 
-          
-
           <Grid item md={12}>
             <Grid container spacing={2} sx={{ padding: 2 }}>
               <Grid item xs={12} md={4}>
@@ -245,81 +231,82 @@ const CreateUserPage = () => {
                   inputProps={{ maxLength: 50 }}
                 />
                 <TextField
-                  id="cellphone"
-                  name="cellphone"
+                  id="phone"
+                  name="phone"
                   label="Número de Teléfono"
                   variant="outlined"
                   fullWidth
-                  value={form.values.cellphone}
+                  value={form.values.phone}
                   onChange={form.handleChange}
-                  error={form.touched.cellphone && Boolean(form.errors.cellphone)}
-                  helperText={form.touched.cellphone && form.errors.cellphone}
+                  error={form.touched.phone && Boolean(form.errors.phone)}
+                  helperText={form.touched.phone && form.errors.phone}
                   margin="normal"
                   inputProps={{ maxLength: 8 }}
                 />
               </Grid>
             </Grid>
           </Grid>
-
+          <Divider flexItem sx={{ mt: 2, mb: 2 }} />
           <Grid container spacing={2} sx={{padding: 2}}>
               <Grid item xs={12} md={4}>            
                 <Typography variant="h6">Rol</Typography>
               </Grid>
               <Grid item xs={12} md={8}>
-
-                <Select multiple
-                  fullWidth
-                  name="roles"
-                  label="Roles"
-                  value={form.values.roles}
-                  onChange={(event)=>{
-                      form.setFieldValue('roles', event.target.value)
-                  }}
-                  onBlur={form.handleBlur}
-                  input={<OutlinedInput label="Roles"/>}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip key={value} label={value} />
-                      ))}
-                    </Box>
-                  )}
-                  >
-                  {roles.map((rol:Role) => (
-                    <MenuItem
-                      key={rol.roleName}
-                      value={rol.roleName}
-                    >{rol.roleName}</MenuItem> 
-                  ))}
-                </Select>
+                <FormControl fullWidth>
+                  <InputLabel>Roles</InputLabel>
+                  <Select multiple
+                    name="roles"
+                    label="Roles"
+                    value={form.values.roles}
+                    onChange={(event)=>{
+                        form.setFieldValue('roles', event.target.value)
+                    }}
+                    onBlur={form.handleBlur}
+                    input={<OutlinedInput label="Roles"/>}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value: string) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                    >
+                    {roles.map((rol:Role) => (
+                      <MenuItem
+                        key={rol.roleName}
+                        value={rol.roleName}
+                      >{rol.roleName}</MenuItem> 
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{paddingTop: 5}}>
             <Grid container spacing={2} justifyContent="flex-end">
               <Button variant="contained" color="primary" type="submit">
                 GUARDAR
               </Button>
             </Grid>
           </Grid>
-        </Grid>
-      </form>
-      <SuccessDialog
-        open={isSuccesOpen}
-        onClose={() => {
-          setIsSuccessOpen(false)
-          navigate('/users')
-        }}
-        title={(id)?"¡Estudiante Actualizado!":"¡Estudiante Creado!"}
-        subtitle={`El estudiante ha sido ${(id)?"actualizado": "creado"} con éxito.`}
-      />
-      <ErrorDialog
-        open={isErrorOpen}
-        onClose={() => setIsErrorOpen(false)}
-        title={"¡Vaya!"}
-        subtitle={"Hubo un problema al crear el nuevo usuario. Intentelo de nuevo mas tarde"}
-      />
-    </FormContainer>
+        </form>
+        <SuccessDialog
+          open={isSuccesOpen}
+          onClose={() => {
+            setIsSuccessOpen(false)
+            handleClose()
+          }}
+          title={(user)?"¡Estudiante Actualizado!":"¡Estudiante Creado!"}
+          subtitle={`El estudiante ha sido ${(user)?"actualizado": "creado"} con éxito.`}
+        />
+        <ErrorDialog
+          open={isErrorOpen}
+          onClose={() => setIsErrorOpen(false)}
+          title={"¡Vaya!"}
+          subtitle={"Hubo un problema al crear el nuevo usuario. Intentelo de nuevo mas tarde"}
+        />
+      </FormContainer>
+    </Dialog>
   );
 }
 

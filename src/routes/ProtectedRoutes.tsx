@@ -28,7 +28,6 @@ import MyEventsTable from "../pages/interns/MyEventsTable";
 import "../style.css";
 import UsersPage from "../pages/Users/UsersPage";
 import AdministratorPage from "../pages/Administrator/AdministratorPage";
-import CreateUserPage from "../pages/Users/CreateUserPage";
 import EventHistory from "../components/cards/EventHistory";
 import ViewInternSupervisor from "../pages/supervisor/ViewInternSupervisor";
 import EventsByInternsPage from "../pages/interns/EventsByInterns";
@@ -265,20 +264,28 @@ const protectedRoutes = [
       },
       {
         path: "/administration",
-        element: <AdministratorPage />,
+        element: (
+          <RoleGuard allowedRoles={["admin"]}>
+            <AdministratorPage />
+          </RoleGuard>
+        ),
       },
       {
         path: "/users",
-        element: <UsersPage />,
+        element: (
+          <RoleGuard allowedRoles={["admin"]}>
+            <UsersPage />
+          </RoleGuard>
+        ),
       },
-      {
-        path: "/create-user",
-        element: <CreateUserPage />,
-      },
-      {
-        path: "/edit-user/:id",
-        element: <CreateUserPage />,
-      },
+      // {
+      //   path: "/create-user",
+      //   element: <CreateUserPage />,
+      // },
+      // {
+      //   path: "/edit-user/:id",
+      //   element: <CreateUserPage />,
+      // },
       {
         path: "/supervisor",
         element: (

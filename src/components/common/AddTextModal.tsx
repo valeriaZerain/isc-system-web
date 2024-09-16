@@ -7,15 +7,23 @@ import './ModalStyle.css';
 
 const AddTextModal: FC<AddTextModalProps> = ({ isVisible, setIsVisible, onCreate }) => {
 const [name, setName] = useState('');
+const [error, setError] = useState<string | null>(null);
 
   const handleCreate = async () => {
-    onCreate(name);
-    setIsVisible(false);
+    if(!name.trim()){
+      setError("El nombre del rol no puede estar vacío");
+    }else{
+      onCreate(name);
+      setIsVisible(false);
+      setName('');
+      setError(null);
+    }
   };
 
   const toggleModal = () => {
     setIsVisible(!isVisible);
     setName('');
+    setError(null);
   };
 
   return (
@@ -38,11 +46,14 @@ const [name, setName] = useState('');
         <TextField
           fullWidth
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {setName(e.target.value);
+                            if (error) setError(null);}}
           label="Ingresa el nombre del nuevo rol"
           variant="outlined"
           inputProps={{ maxLength: 25 }}
           sx={{ marginTop: '20px' }}
+          error={!!error}
+          helperText={error}
         />
         <Box display="flex" justifyContent="flex-end" mt={2}  sx={{ marginTop: '20px' }}>
           <Button variant="outlined" color="secondary" onClick={toggleModal} sx={{ marginRight: '10px' }}>
