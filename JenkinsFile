@@ -1,15 +1,20 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:20'
+            args '-u root'
+        }
+    }
     tools {
         nodejs 'nodejs20'
     }
     stages {
         stage('Clone Project') {
             steps {
-                git branch:'qa', url: 'https://github.com/valeriaZerain/isc-system-web.git'
+                git branch: 'qa', url: 'https://github.com/valeriaZerain/isc-system-web.git'
             }
         }
-        stage('Install dependencies') {
+        stage('Install Dependencies') {
             steps {
                 sh 'npm install -g yarn'
                 sh 'yarn install'
@@ -17,15 +22,24 @@ pipeline {
         }
         stage('System Setup') {
             steps {
-                sh 'sudo apt-get update'
-                sh 'sudo apt-get install -y xvfb'
-                sh 'npm install'
+                // Instalación de xvfb sin sudo
+                sh 'apt-get update'
+                sh 'apt-get install -y xvfb'
             }
         }
         stage('Run Cypress Tests (xvfb)') {
             steps {
                 sh 'xvfb-run npx cypress run'
             }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: '**/cypress/screenshots/**/*', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/cypress/videos/**/*', allowEmptyArchive: true
+        }
+        failure {
+            echo 'Build failed. Check the logs and Cypress reports for details.'
         }
     }
 }
