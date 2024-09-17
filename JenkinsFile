@@ -20,7 +20,7 @@ pipeline {
             }
         }
         stage('System Setup') {
-            steps 
+            steps {
                 sh 'apt-get update'
                 sh 'apt-get install -y xvfb'
             }
