@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import GraphicHours from "./GraphicHours";
 import HoursCard from "../../components/common/HoursCard";
 import { Interns } from "../../models/internsInterface";
-import { getInternByUserIdService } from "../../services/internService";
+import {
+  getInternByUserIdService,
+} from "../../services/internService";
 import { useUserStore } from "../../store/store";
 import SimpleHoursCard from "../../components/common/SimpleHoursCard";
 import { getCurrentSemester } from "../../utils/general";
