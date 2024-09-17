@@ -30,8 +30,8 @@ import {
 import { useUserStore } from "../../store/store";
 import { InternsInformation } from "../../models/internsInterface";
 import {
+  getInternByUserIdService,
   getInternData,
-  getInternInformation,
 } from "../../services/internService";
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -83,7 +83,7 @@ const EventCard = ({ event }: EventCardProps) => {
 
   const fetchIntern = async () => {
     try {
-      const res = await getInternInformation(user!.id);
+      const res = await getInternByUserIdService(user!.id);
       setInternInfomation(res.data);
     } catch (error) {
       console.error("Error fetching Intern:", error);
@@ -155,7 +155,10 @@ const EventCard = ({ event }: EventCardProps) => {
   };
 
   const handleConfirm = async () => {
-    const res = await registerInternEventService(Number(id_event), user!.id);
+    const res = await registerInternEventService(
+      Number(id_event),
+      Number(internInfomation?.id)
+    );
     if (res.success) {
       setisRegister(true);
       setAlert({
