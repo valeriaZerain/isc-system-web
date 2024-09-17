@@ -70,7 +70,7 @@ const ConfirmDialog = ({
       {children}
       <DialogActions sx={{ justifyContent: "flex-end", padding: "24px" }}>
         <Button
-          onClick={onSecondaryButtonClick} 
+          onClick={onSecondaryButtonClick || onClose} 
           variant="contained"
           sx={{
             backgroundColor: "primary",
