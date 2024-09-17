@@ -156,7 +156,6 @@ const EventCard = ({ event }: EventCardProps) => {
 
   const handleConfirm = async () => {
     const res = await registerInternEventService(Number(id_event), user!.id);
-    //FIX: check me
     if (res.success) {
       setisRegister(true);
       setAlert({

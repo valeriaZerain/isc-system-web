@@ -5,7 +5,6 @@ import HoursCard from "../../components/common/HoursCard";
 import { Interns } from "../../models/internsInterface";
 import {
   getInternByUserIdService,
-  getInternService,
 } from "../../services/internService";
 import { useUserStore } from "../../store/store";
 import SimpleHoursCard from "../../components/common/SimpleHoursCard";
@@ -34,7 +33,7 @@ function HoursPage() {
                 backgroundColor="#f3a43f"
                 textColor="#FFFFFF"
                 title="Total de Horas Requeridas"
-                subtitle="SEMESTRE II   2024"
+                subtitle="SEMESTRE II 2024"
                 count={intern?.total_hours || 0}
               />
             </Grid>
