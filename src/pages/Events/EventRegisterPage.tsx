@@ -319,13 +319,18 @@ const EventRegisterPage = () => {
                 description={"Ingrese el nuevo valor asignado"}
               >
                 <TextField
-                  type="number"
+                  type="text"
                   value={newHours}
-                  onChange={(e) => setNewHours(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && (value === "" || parseInt(value) <= 168)) {
+                      setNewHours(value);
+                    }
+                  }}
                   label="Horas Becarias"
                   margin="normal"
                   sx={{ marginRight: 2, marginLeft: 2 }}
-                  inputProps={{ min: 0 }}
+                  inputProps={{ min: 0 , inputMode:"numeric"}}
                 />
               </ConfirmDialog>
             </div>

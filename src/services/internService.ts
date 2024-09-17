@@ -137,3 +137,22 @@ export const getInternByUserIdService = async (userId: number) => {
     }
   }
 };
+
+export const getInternHistoryByIdService = async (internId: number) => {
+  try {
+    const response = await apiClient.get(
+      `/interns/${internId}/historial-eventos`
+    );
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to get intern events" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};
