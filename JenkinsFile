@@ -1,8 +1,7 @@
 pipeline {
     agent {
-        dockerContainer {
+        docker {
             image 'node:20'
-            args '-u root'
         }
     }
     tools {
@@ -21,8 +20,7 @@ pipeline {
             }
         }
         stage('System Setup') {
-            steps {
-                // Instalación de xvfb sin sudo
+            steps 
                 sh 'apt-get update'
                 sh 'apt-get install -y xvfb'
             }
@@ -31,15 +29,6 @@ pipeline {
             steps {
                 sh 'xvfb-run npx cypress run'
             }
-        }
-    }
-    post {
-        always {
-            archiveArtifacts artifacts: '**/cypress/screenshots/**/*', allowEmptyArchive: true
-            archiveArtifacts artifacts: '**/cypress/videos/**/*', allowEmptyArchive: true
-        }
-        failure {
-            echo 'Build failed. Check the logs and Cypress reports for details.'
         }
     }
 }
