@@ -10,12 +10,9 @@ pipeline {
             }
         }
         stage('Install dependencies') {
-            cache(
-                    key: 'node-modules',
-                    paths: ['node_modules']
-                ) {
-                    sh 'yarn install'
-                }
+            steps {
+                sh 'yarn install'
+            }
         }
         stage('Install cypress'){
             steps {
