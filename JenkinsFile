@@ -14,14 +14,9 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Build') {
-            steps {
-                sh 'npm run build'
-            }
-        }
         stage('Cypress tests') {
             steps {
-                sh 'npx cypress run'
+                sh 'npx cypress run --headless'
             }
         }
     }
