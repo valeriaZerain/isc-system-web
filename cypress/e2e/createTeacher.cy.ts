@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
-const email = 'paulwilkerlf@gmail.com';
-const password = '123456';
+const email = Cypress.env("ADMIN_EMAIL");
+const password = Cypress.env("ADMIN_PASSWORD");
 
 
 Cypress.Commands.add('login', (email, password) => {
