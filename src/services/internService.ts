@@ -120,3 +120,20 @@ export const createIntern = async (intern: Partial<Interns>) => {
     }
   }
 };
+
+export const getInternByUserIdService = async (userId: number) => {
+  try {
+    const response = await apiClient.get(`interns/${userId}/intern`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return { error: "Failed to get intern by user id" };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return { error: error.response?.data.message || "Network error" };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
+  }
+};

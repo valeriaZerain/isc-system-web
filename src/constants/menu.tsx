@@ -10,7 +10,6 @@ import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import EventIcon from "@mui/icons-material/Event";
 import ViewListIcon from "@mui/icons-material/ViewList";
-//FIX: check me
 import HistoryIcon from "@mui/icons-material/History";
 import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 

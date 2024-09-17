@@ -5,7 +5,6 @@ import CompleteScholarshipHourEventCard from "../../components/cards/CompleteSch
 import { getEventsService } from "../../services/eventsService";
 
 const CompleteScholarshipHourPage = () => {
-  //FIX: check before push
   const [events, setEvents] = useState<Event[]>();
 
   const fetchEvents = async () => {
