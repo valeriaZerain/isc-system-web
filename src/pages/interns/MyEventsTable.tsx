@@ -16,8 +16,8 @@ import dayjs from "dayjs";
 import ContainerPage from "../../components/common/ContainerPage";
 import { useUserStore } from "../../store/store";
 import {
+  getInternByUserIdService,
   getInternEvents,
-  getInternInformation,
 } from "../../services/internService";
 import { deleteInternFromEventService } from "../../services/eventsService";
 import { EventInternsType } from "../../models/eventInterface";
@@ -196,7 +196,7 @@ const MyEventsTable = () => {
 
   const fetchIntern = async () => {
     try {
-      const res = await getInternInformation(user!.id);
+      const res = await getInternByUserIdService(user!.id);
       setInternInfomation(res.data);
     } catch (error) {
       console.error("Error fetching Intern:", error);
