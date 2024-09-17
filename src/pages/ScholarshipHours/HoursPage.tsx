@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import GraphicHours from "./GraphicHours";
 import HoursCard from "../../components/common/HoursCard";
 import { Interns } from "../../models/internsInterface";
-import {
-  getInternByUserIdService,
-} from "../../services/internService";
+import { getInternByUserIdService } from "../../services/internService";
 import { useUserStore } from "../../store/store";
 import SimpleHoursCard from "../../components/common/SimpleHoursCard";
+import { getCurrentSemester } from "../../utils/general";
 
 function HoursPage() {
   const [intern, setIntern] = useState<Interns>();
+  const currentSemester = getCurrentSemester();
   const user = useUserStore((state) => state.user);
   const fetchIntern = async () => {
     const res = await getInternByUserIdService(user!.id);
@@ -33,7 +33,7 @@ function HoursPage() {
                 backgroundColor="#f3a43f"
                 textColor="#FFFFFF"
                 title="Total de Horas Requeridas"
-                subtitle="SEMESTRE II 2024"
+                subtitle={currentSemester}
                 count={intern?.total_hours || 0}
               />
             </Grid>
