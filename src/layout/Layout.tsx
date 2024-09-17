@@ -121,7 +121,9 @@ const Layout = () => {
             </Typography>
           </Box>
 
-          <Tooltip title="Open settings">
+          <Tooltip 
+            data-test-id="user_icon"
+            title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar alt={user?.name} src="/static/images/avatar/2.jpg" />
             </IconButton>
@@ -143,7 +145,10 @@ const Layout = () => {
             onClose={handleCloseUserMenu}
           >
             {settings.map((setting) => (
-              <MenuItem key={setting.title} onClick={setting.onClick}>
+              <MenuItem
+                key={setting.title}
+                data-test-id={setting.title === "Logout" ? "logout_button" : undefined}
+                onClick={setting.onClick}>
                 <Typography textAlign="center">{setting.title}</Typography>
               </MenuItem>
             ))}

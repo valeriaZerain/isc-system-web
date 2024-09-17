@@ -1,7 +1,23 @@
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Chip, Dialog, DialogTitle, Divider, FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogTitle,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { FormContainer } from "../../pages/CreateGraduation/components/FormContainer";
 import { getRoles } from "../../services/roleService";
 import SuccessDialog from "../common/SucessDialog";
@@ -10,11 +26,15 @@ import { putUser, createUserWIthRoles } from "../../services/usersService";
 import { Role } from "../../models/roleInterface";
 import { UserFormProps } from "../../models/userFormPropsInterface";
 
-const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) => {
-  const [isSuccesOpen, setIsSuccessOpen] = useState<boolean>(false)
-  const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false)
-  const [roles, setRoles] = useState<Role[]>([])
-  const [isTeacher, setIsTeacher] = useState<boolean>(false)
+const CreateUserPage = ({
+  handleClose,
+  openCreate,
+  user = null,
+}: UserFormProps) => {
+  const [isSuccesOpen, setIsSuccessOpen] = useState<boolean>(false);
+  const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [isTeacher, setIsTeacher] = useState<boolean>(false);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("El nombre completo es obligatorio"),
@@ -31,62 +51,52 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
     degree: Yup.string().when({
       is: () => isTeacher,
       then: () => Yup.string().required("El título académico es obligatorio"),
-      otherwise: () => Yup.string().notRequired()
-    })
-  })
+      otherwise: () => Yup.string().notRequired(),
+    }),
+  });
 
-  const form = useFormik(
-    {
-      initialValues: {
-        name: user?.name || "",
-        code: user?.code || "",
-        lastname: user?.lastname || "",
-        mothername: user?.mothername || "",
-        email: user?.email || "",
-        phone: user?.phone || "",
-        roles: user?.roles || [],
-        degree: user?.degree || ""
-      },
-      validationSchema,
-      onSubmit: async (values, { resetForm }) => {
-        try {
-          if(user)
-            await putUser(user.id, values)
-          else
-            await createUserWIthRoles(values)
-          setIsSuccessOpen(true)  
-          resetForm();
-        } catch (error) {
-          setIsErrorOpen(true)
-        }
-      },
-    }
-  )
+  const form = useFormik({
+    initialValues: {
+      name: user?.name || "",
+      code: user?.code || "",
+      lastname: user?.lastname || "",
+      mothername: user?.mothername || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      roles: user?.roles || [],
+      degree: user?.degree || "",
+    },
+    validationSchema,
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        if (user) await putUser(user.id!, values as any);
+        else await createUserWIthRoles(values as any);
+        setIsSuccessOpen(true);
+        resetForm();
+      } catch (error) {
+        setIsErrorOpen(true);
+      }
+    },
+  });
 
   const handleChangeIsTeacher = (event: SelectChangeEvent<boolean>) => {
     setIsTeacher(event.target.value as boolean);
-  }
+  };
 
   const fetchRoles = async () => {
-    const rolesResponse = await getRoles()
-    setRoles(rolesResponse)
-  }
+    const rolesResponse = await getRoles();
+    setRoles(rolesResponse);
+  };
 
   useEffect(() => {
-      fetchRoles()
-  }, [])
+    fetchRoles();
+  }, []);
 
   return (
-    <Dialog open={openCreate}
-            onClose={handleClose}
-            maxWidth="lg"
-            >
+    <Dialog open={openCreate} onClose={handleClose} maxWidth="lg">
       <DialogTitle>
         <Typography variant="h4">
-          {
-            user? "Editar usuario":
-            "Crear nuevo usuario"
-          }
+          {user ? "Editar usuario" : "Crear nuevo usuario"}
         </Typography>
         <Typography variant="body2" sx={{ fontSize: 14, color: "gray" }}>
           Ingrese los datos del {user && "nuevo"} usuario a continuación.
@@ -94,28 +104,26 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
       </DialogTitle>
 
       <FormContainer>
-        <form 
-        onSubmit={form.handleSubmit}
-        >
-          {!user && <Grid container  sx={{padding: 2}} spacing={2}>
-            <Grid item xs={12} md={4}>            
-              <Typography variant="h6">Tipo de Usuario</Typography>
+        <form onSubmit={form.handleSubmit}>
+          {!user && (
+            <Grid container sx={{ padding: 2 }} spacing={2}>
+              <Grid item xs={12} md={4}>
+                <Typography variant="h6">Tipo de Usuario</Typography>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <Select
+                  fullWidth
+                  value={isTeacher}
+                  label={"Estudiante o Docente"}
+                  onChange={handleChangeIsTeacher}
+                >
+                  <MenuItem value={"true"}>Docente</MenuItem>
+                  <MenuItem value={"false"}>Estudiante</MenuItem>
+                </Select>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={8}>
-              <Select
-                fullWidth
-                value={isTeacher}
-                label={"Estudiante o Docente"}
-                onChange={handleChangeIsTeacher}
-              >
-                <MenuItem value={"true"}>Docente</MenuItem>
-                <MenuItem value={"false"}>Estudiante</MenuItem>
-              </Select>
-              
-            </Grid>
-          </Grid>
-          }
-          
+          )}
+
           <Divider flexItem sx={{ mt: 2, mb: 2 }} />
           <Grid item xs={12}>
             <Grid container spacing={2} sx={{ padding: 2 }}>
@@ -148,7 +156,9 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
                       value={form.values.lastname}
                       onChange={form.handleChange}
                       onBlur={form.handleBlur}
-                      error={form.touched.lastname && Boolean(form.errors.lastname)}
+                      error={
+                        form.touched.lastname && Boolean(form.errors.lastname)
+                      }
                       helperText={form.touched.lastname && form.errors.lastname}
                       margin="normal"
                     />
@@ -156,7 +166,7 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
                 </Grid>
                 <Grid container spacing={2}>
                   <Grid item md={6} xs={12}>
-                  <TextField
+                    <TextField
                       id="mothername"
                       name="mothername"
                       label="Apellido Materno"
@@ -165,8 +175,13 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
                       value={form.values.mothername}
                       onChange={form.handleChange}
                       onBlur={form.handleBlur}
-                      error={form.touched.mothername && Boolean(form.errors.mothername)}
-                      helperText={form.touched.mothername && form.errors.mothername}
+                      error={
+                        form.touched.mothername &&
+                        Boolean(form.errors.mothername)
+                      }
+                      helperText={
+                        form.touched.mothername && form.errors.mothername
+                      }
                       margin="normal"
                     />
                   </Grid>
@@ -187,25 +202,27 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
                     />
                   </Grid>
                 </Grid>
-                {isTeacher && <TextField
-                  id="degree"
-                  name="degree"
-                  label="Título Académico"
-                  variant="outlined"
-                  fullWidth
-                  select
-                  value={form.values.degree}
-                  onChange={form.handleChange}
-                  onBlur={form.handleBlur}
-                  error={form.touched.degree && Boolean(form.errors.degree)}
-                  helperText={form.touched.degree && form.errors.degree}
-                  margin="normal"
-                >
-                  <MenuItem value="">Seleccione un título</MenuItem>
-                  <MenuItem value="Ing.">Ing.</MenuItem>
-                  <MenuItem value="Msc">Msc.</MenuItem>
-                  <MenuItem value="PhD">PhD.</MenuItem>
-                </TextField>}
+                {isTeacher && (
+                  <TextField
+                    id="degree"
+                    name="degree"
+                    label="Título Académico"
+                    variant="outlined"
+                    fullWidth
+                    select
+                    value={form.values.degree}
+                    onChange={form.handleChange}
+                    onBlur={form.handleBlur}
+                    error={form.touched.degree && Boolean(form.errors.degree)}
+                    helperText={form.touched.degree && form.errors.degree}
+                    margin="normal"
+                  >
+                    <MenuItem value="">Seleccione un título</MenuItem>
+                    <MenuItem value="Ing.">Ing.</MenuItem>
+                    <MenuItem value="Msc">Msc.</MenuItem>
+                    <MenuItem value="PhD">PhD.</MenuItem>
+                  </TextField>
+                )}
               </Grid>
             </Grid>
             <Divider flexItem sx={{ my: 2 }} />
@@ -247,42 +264,42 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
             </Grid>
           </Grid>
           <Divider flexItem sx={{ mt: 2, mb: 2 }} />
-          <Grid container spacing={2} sx={{padding: 2}}>
-              <Grid item xs={12} md={4}>            
-                <Typography variant="h6">Rol</Typography>
-              </Grid>
-              <Grid item xs={12} md={8}>
-                <FormControl fullWidth>
-                  <InputLabel>Roles</InputLabel>
-                  <Select multiple
-                    name="roles"
-                    label="Roles"
-                    value={form.values.roles}
-                    onChange={(event)=>{
-                        form.setFieldValue('roles', event.target.value)
-                    }}
-                    onBlur={form.handleBlur}
-                    input={<OutlinedInput label="Roles"/>}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value: string) => (
-                          <Chip key={value} label={value} />
-                        ))}
-                      </Box>
-                    )}
-                    >
-                    {roles.map((rol:Role) => (
-                      <MenuItem
-                        key={rol.roleName}
-                        value={rol.roleName}
-                      >{rol.roleName}</MenuItem> 
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+          <Grid container spacing={2} sx={{ padding: 2 }}>
+            <Grid item xs={12} md={4}>
+              <Typography variant="h6">Rol</Typography>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <FormControl fullWidth>
+                <InputLabel>Roles</InputLabel>
+                <Select
+                  multiple
+                  name="roles"
+                  label="Roles"
+                  value={form.values.roles}
+                  onChange={(event) => {
+                    form.setFieldValue("roles", event.target.value);
+                  }}
+                  onBlur={form.handleBlur}
+                  input={<OutlinedInput label="Roles" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value: string) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {roles.map((rol: Role) => (
+                    <MenuItem key={rol.roleName} value={rol.roleName}>
+                      {rol.roleName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
 
-          <Grid item xs={12} sx={{paddingTop: 5}}>
+          <Grid item xs={12} sx={{ paddingTop: 5 }}>
             <Grid container spacing={2} justifyContent="flex-end">
               <Button variant="contained" color="primary" type="submit">
                 GUARDAR
@@ -293,21 +310,25 @@ const CreateUserPage = ({handleClose, openCreate, user = null} : UserFormProps) 
         <SuccessDialog
           open={isSuccesOpen}
           onClose={() => {
-            setIsSuccessOpen(false)
-            handleClose()
+            setIsSuccessOpen(false);
+            handleClose();
           }}
-          title={(user)?"¡Estudiante Actualizado!":"¡Estudiante Creado!"}
-          subtitle={`El estudiante ha sido ${(user)?"actualizado": "creado"} con éxito.`}
+          title={user ? "¡Estudiante Actualizado!" : "¡Estudiante Creado!"}
+          subtitle={`El estudiante ha sido ${
+            user ? "actualizado" : "creado"
+          } con éxito.`}
         />
         <ErrorDialog
           open={isErrorOpen}
           onClose={() => setIsErrorOpen(false)}
           title={"¡Vaya!"}
-          subtitle={"Hubo un problema al crear el nuevo usuario. Intentelo de nuevo mas tarde"}
+          subtitle={
+            "Hubo un problema al crear el nuevo usuario. Intentelo de nuevo mas tarde"
+          }
         />
       </FormContainer>
     </Dialog>
   );
-}
+};
 
-export default CreateUserPage
+export default CreateUserPage;
