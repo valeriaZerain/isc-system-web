@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'cypress/included:13.14.2'
-        }
-    }
+    agent any
     tools {
         nodejs 'nodejs20'
     }
@@ -13,9 +9,17 @@ pipeline {
                 git branch:'qa', url: 'https://github.com/valeriaZerain/isc-system-web.git'
             }
         }
-        stage('Install Dependencies') {
+        stage('Install dependencies') {
+            cache(
+                    key: 'node-modules',
+                    paths: ['node_modules']
+                ) {
+                    sh 'yarn install'
+                }
+        }
+        stage('Install cypress'){
             steps {
-                sh 'npm install'
+                sh 'yarn add cypress --dev'
             }
         }
         stage('Cypress tests') {
